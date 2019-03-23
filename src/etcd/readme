@@ -1,0 +1,54 @@
+
+export ETCDCTL_CA_FILE=/var/lib/etcd/ssl/ca.pem
+export ETCDCTL_CERT_FILE=/var/lib/etcd/ssl/etcd-node.pem
+export ETCDCTL_KEY_FILE=/var/lib/etcd/ssl/etcd-node-key.pem
+export ETCDCTL_API=3 
+export ETCDCTL_ENDPOINTS=https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379
+
+etcdctl --endpoints=https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379 cluster-health
+
+
+# v2
+export ETCDCTL_CA_FILE=ca.pem
+export ETCDCTL_CERT_FILE=admin.pem
+export ETCDCTL_KEY_FILE=admin-key.pem
+export ETCDCTL_ENDPOINTS="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+
+
+# v3
+
+ETCDCTL_CACERT=/var/lib/etcd/ssl/ca.pem
+ETCDCTL_CERT=/var/lib/etcd/ssl/etcd-nodes.pem
+ETCDCTL_KEY=/var/lib/etcd/ssl/etcd-nodes-key.pem
+ETCDCTL_ENDPOINTS=https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379
+ETCDCTL_API=3 
+
+ETCDCTL_CACERT=/etc/kubernetes/ssl/ca.pem
+ETCDCTL_CERT=/etc/kubernetes/ssl/apiserver.pem
+ETCDCTL_KEY=/etc/kubernetes/ssl/apiserver-key.pem
+ETCDCTL_API=3 
+ETCDCTL_ENDPOINTS=https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379
+
+
+
+# examples
+
+etcdctl ls /                                                                 
+etcdctl ls / --recursive                                                     
+etcdctl ls /_etcd/machines --recursive                                       
+etcdctl ls /                                                                 
+etcdctl mkdir /example                                                       
+etcdctl mk /example foo 'bar'                                                
+etcdctl mk /example/foo 'bar'                                                
+etcdctl mkdir /example
+etcdctl update /example/foo "AM"
+etcdctl -o extended  get /example/foo
+etcdctl set /mkoyan/am 'hey'
+etcdctl rm /example/am       
+etcdctl rm /example --recursive
+etcdctl update /example/foo "AM"
+etcdctl -o extended  get /example/foo
+etcdctl set /example/am "Artur"
+etcdctl watch /example/am
+while true; do etcdctl watch --recursive /example; done
+etcdctl exec-watch --recursive /example/am -- rm -rf /home/core/trash.txt

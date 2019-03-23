@@ -1,0 +1,136 @@
+{
+  "ignition": {
+    "config": {},
+    "security": {
+      "tls": {}
+    },
+    "timeouts": {},
+    "version": "2.2.0"
+  },
+  "networkd": {
+    "units": [
+      {
+        "contents": "[Match]\nName=ens192\n\n[Network]\nDNS=10.100.130.1\nAddress=10.100.130.113/24\nGateway=10.100.130.1\n",
+        "name": "00-ens192.network"
+      }
+    ]
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "core",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops"
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "filesystem": "root",
+        "path": "/etc/metadata/coreos",
+        "contents": {
+          "source": "data:,COREOS_PRIVATE_IPV4%3D10.100.130.113%0ACOREOS__HOSTNAME%3Dcoreos-3%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/environment",
+        "contents": {
+          "source": "data:,export%20ETCDCTL_CACERT%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fca.pem%0Aexport%20ETCDCTL_CERT%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes.pem%0Aexport%20ETCDCTL_KEY%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes-key.pem%0Aexport%20ETCDCTL_API%3D3%20%0Aexport%20ETCDCTL_ENDPOINTS%3Dhttps%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/hostname",
+        "contents": {
+          "source": "data:,coreos-3.mkoyan.local",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/hosts",
+        "contents": {
+          "source": "data:,127.0.0.1%09localhost%0A%3A%3A1%09%09localhost%20%0A10.100.130.111%20coreos-1%20coreos-1.mkoyan.local%0A10.100.130.112%20coreos-2%20coreos-2.mkoyan.local%0A10.100.130.113%20coreos-3%20coreos-3.mkoyan.local%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/motd",
+        "contents": {
+          "source": "data:,Hey%20Mkoyan!%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/systemd/timesyncd.conf",
+        "contents": {
+          "source": "data:,%5BTime%5D%0ANTP%3D10.100.130.1%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/var/lib/etcd/ssl/ca.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIDfzCCAmegAwIBAgIJAIjBdb8zuCZvMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBdMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDEV%0AMBMGA1UEAwwMbWtveWFuLmxvY2FsMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB%0ACgKCAQEAw7WmWvK09wnisgJk7iXpAQxMmaN%2FTmQzx20%2B7VUlHh3eMtuf0dAbWDav%0AN8gtECURNah75Fb4OAesyc2h%2B4TrY%2FPDjNialIR3nTVSFMbyB8TeBGCvnqyDYk5e%0AP7Qr1l58LRN0TxnfeBhP3QFHcAZBj35Y646jvSCeTkcc2VYd%2BKKJsURQenWxM77h%0AfAnqoMFgfJwzBCB0mSDNSooEqXLWNPZT3Fa37%2FxQM%2FV2mRfqHu5M8J6%2BoRrt%2FiGv%0A2Xzzg3st%2FrVawx99Lji25hiKnJeP59s2E9vxdKuL3ra%2FZRaIdSCUBlLM1mEJqtJ6%0Ao1b3SijwfBtDSVRfRLPZWnZmRYf66wIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAQYw%0ADwYDVR0TAQH%2FBAUwAwEB%2FzAdBgNVHQ4EFgQUcPmQa4KCQ46e7YV4F3ne1UaHPeAw%0ADQYJKoZIhvcNAQELBQADggEBAB0yGwbH38Yf1kW2FHWc%2FoEQWTOfbl3yWUJ1LxO8%0ARjPnt%2BDZuLTBlsKB4P1%2FaDXNzwDNxMkDm7yKygp4bgd%2BrVjnP%2BiVw24rl5N2gyPj%0An%2FcuRbhIEnd%2Fa%2F76J79tWL%2Bar%2FW9zqBCBVBHDiE%2BYg6ZmVu1HNHPIcbUjDCwbFBY%0A2nzZw52dheeLiyjF%2Bdf5g0bWOgLAj%2FjtwmhrcA89pJPbilEJoJ2AlQOXga6LPYVH%0AQ6RZdIZQGqsOJRli8tfTAMCeZr%2Fkx%2FccJZ3pMUxQlK9HdhSrzo63Ri1HrK0uopUI%0As2deH14CLHupM%2FaL3BR08oGjXVcDJVoY4rGoFtc86qn1MaY%3D%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/var/lib/etcd/ssl/etcd-nodes.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIFMDCCBBigAwIBAgIJALWF5%2Bt9HxjjMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBbMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDET%0AMBEGA1UEAwwKZXRjZC1ub2RlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC%0AggEBAN9z0u3cYJRsF0uQ71QtD3Op1Ct4QGRTEpM172ZuJKzZGB3SnKmQfqtQFHGZ%0ARcLS2heper85YPt97qOvHCrak5ZQnt91Ad3DVkjZgSa%2Fri6CxEGMWeSaUgKM5QCH%0AxWKjZKX%2FPX2kVYyD0j9o%2FkOAsTRxy9BxxEf5wpDfr%2BZEMZDwC7E3RZ2AdwBo1BmB%0AaZYPSUK80ClduPppEuV7kTndD8JPO3FpfT8HEeOEY4dEV8LcSWRlww3HVup7iAi7%0A4AZDK3ocMsnGmm43r2bJnuAD%2F2%2Fo0r1p4ZCXBdHwKi0gh6YIknNJBWNUZvf6Bcwh%0AGuDNLL3%2BxIw6bMCtU1E7W8w%2F%2BUsCAwEAAaOCAfMwggHvMA4GA1UdDwEB%2FwQEAwIF%0A4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH%2FBAIwADAd%0ABgNVHQ4EFgQUXApMLaiXdkbmaftRE9X5D9Ow1TUwggGPBgNVHREEggGGMIIBgoIM%0AbWtveWFuLmxvY2FsghVjb3Jlb3MtMS5ta295YW4ubG9jYWyCFWNvcmVvcy0yLm1r%0Ab3lhbi5sb2NhbIIVY29yZW9zLTMubWtveWFuLmxvY2Fsgglsb2NhbGhvc3SCCGNv%0AcmVvcy0xgghjb3Jlb3MtMoIIY29yZW9zLTOCDmNvcmVvcy0xLmxvY2Fsgg5jb3Jl%0Ab3MtMi5sb2NhbIIOY29yZW9zLTMubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0%0AZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4Ika3ViZXJuZXRlcy5k%0AZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2Fsgg5rdWJlLWFwaXNlcnZlcoIKa3ViZS1h%0AZG1pbocEfwAAAYcECmSCb4cECmSCcIcECmSCcYcECmSCc4cECmSCdIcECmSCdYcE%0ACmSCdocECgMAAYcECmSCAYcECmSCAocEAAAAAIESYWRtaW5AbWtveWFuLmxvY2Fs%0AMA0GCSqGSIb3DQEBCwUAA4IBAQCbbT8TsSN6gHhZVKdO9IsgvJVCycEP2XhY9RwC%0AvNIEV0ywAJ1nk4EmlHkqmSuWUuNfy3Yrgs%2F6aGAdpVzHIlPfo7OYgNgqCSmqB6l1%0AWH%2BwD9Tbsx3c0he%2FGi9%2Be%2B8t0HqPUmxR06O0RbPjokWuMyPWw1ARUrl3hVMwcPkb%0A%2F0jkIzjbv%2BZp9WaqcvwvD5JxiD4LH45XjgPP6buvB8Iq0bwG8PTPbeonhhL7G9Im%0A6ywEodEcayAJ%2Fk9qWozPDCuOe5B3KgSdL9YgW8Y29nq4gfIFhewVGELX9tj1No%2Bq%0Aw1iH%2F3SwpQk1UJTxEi%2B0eZth2Hcs4jtjQZ0oM6qwbb%2BtB%2BQl%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/var/lib/etcd/ssl/etcd-nodes-key.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20RSA%20PRIVATE%20KEY-----%0AMIIEowIBAAKCAQEA33PS7dxglGwXS5DvVC0Pc6nUK3hAZFMSkzXvZm4krNkYHdKc%0AqZB%2Bq1AUcZlFwtLaF6l6vzlg%2B33uo68cKtqTllCe33UB3cNWSNmBJr%2BuLoLEQYxZ%0A5JpSAozlAIfFYqNkpf89faRVjIPSP2j%2BQ4CxNHHL0HHER%2FnCkN%2Bv5kQxkPALsTdF%0AnYB3AGjUGYFplg9JQrzQKV24%2BmkS5XuROd0Pwk87cWl9PwcR44Rjh0RXwtxJZGXD%0ADcdW6nuICLvgBkMrehwyycaabjevZsme4AP%2Fb%2BjSvWnhkJcF0fAqLSCHpgiSc0kF%0AY1Rm9%2FoFzCEa4M0svf7EjDpswK1TUTtbzD%2F5SwIDAQABAoIBAE7wK%2BO7pqLITLJ1%0AURb7lCnYJQv2P0kxz64Rr7EP2AT37H0cmhuM4DLE53P6IZrhwgn55VMIgipWIqfQ%0AhLLe5KSFdpqaSz58c07pB6cYr%2F%2FeUlaVrmwD2FTuUTgOvrxJ3JSHxsFL%2FKzXJL8h%0A6DEQlYlhag8JIb4LjaCAZTODg78fZPYDrvuK%2B0atRwxN1us1wAkP%2B2XgApFT0XUg%0AKMQEoBJUYhCfIOjkWLOo4XS1Bzb%2FsK7dSvawKWfuAs35DO5V3ZY1eb24AA1MWHsl%0ABeqIn%2FoleagBeZo%2FfEZF3tZgeASKn9uJRhwkgVwn7Ifm8BXCM%2F%2BZImgsxaAMY3Lj%0A3N3sGoECgYEA9axvsOfV1OxragA8r1fYM3CHyUNWLZFJEIU%2B95%2F6rJsdTlj8YZyy%0AoYlUs5TtQDTs3lxPqy4Di7DQPw%2F7m2FNimyNq8IMeFPATaHr4fEAQ4PnqMzHA0mF%0AYIl13crcOoGcsyGgNkVECL%2BEYRGJTcFFnQfTR8QbmuXEyQTGBlzxBHUCgYEA6NhH%0AFVZf5f8E3sIrvxi%2B1W%2Bp65ak6HRgjbAviApBhhsdiDJrf65NWDP0XP%2B22YAPLag4%0AITTqia0dRz81zEI1XVY8cCwnI6MWMK4SRVeW0DyeZtPaOcqYYoV9mnIyc00VT5f4%0AwfczmjA3%2BuPGxefzuibl78OHlFKoz6iNOGaKTr8CgYB9EqXmRZFKjnZ9B9PdXPaX%0A8aFfqKV2G3I8M%2BoDvXGscGfyHEGZHGKg9L6nkplax9cTuaFhv9JUStcqU%2BO%2FjkEg%0AyPUzTV514AWWQGpLpBuDQ%2BMrv91N4h9CL5lPKlkGfDgfxm2%2FU3I4lfA6Tug9Krlb%0AIcHB1qhLKtENmh2K3cRihQKBgFz2BCMzsePMVfBtizOnOIFULH3fTgV0eRv4bHGe%0Azpww9TBsGNkICN8fFv%2BOJD1f0C%2BFSquPSdgfomHQjbT39gBGrqiGKDYlJXXX%2BXlv%0Ax8lpekBJcoXCKeajrwrbbuLzsn9tiCZAgHydpavoBnL68Sav4vs%2FkECaY8VMYN1U%0AqwFXAoGBAIzIx1JyKyXEfQrNQrt8hU7rk8XFBwxG0w88MwUFuYJyFiRvqYX%2B9cV3%0AFyWdj5bQs6OaiziiIN28U2cGUqQ5GOuaybpFBk5%2FOgFxinDU2fcEaBWGxSHZkF0G%0AcwRhdYxrAXJ5CPdcX2TsxqhlQrELxYvNV1d%2BeT%2FmULr2wbHhYIr6%0A-----END%20RSA%20PRIVATE%20KEY-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/coreos/update.conf",
+        "contents": {
+          "source": "data:,GROUP%3Dalpha%0AREBOOT_STRATEGY%3D%22etcd-lock%22%0ALOCKSMITHD_ENDPOINT%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0ALOCKSMITHD_ETCD_CAFILE%3D%22%2Fvar%2Flib%2Fetcd%2Fssl%2Fca.pem%22%0ALOCKSMITHD_ETCD_CERTFILE%3D%22%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes.pem%22%0ALOCKSMITHD_ETCD_KEYFILE%3D%22%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes-key.pem%22",
+          "verification": {}
+        },
+        "mode": 420
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "dropins": [
+          {
+            "contents": "[Service]\nExecStart=\nExecStart=/usr/lib/coreos/etcd-wrapper $ETCD_OPTS \\\n  --name=\"coreos-3\" \\\n  --data-dir=\"/var/lib/etcd\" \\\n  --listen-peer-urls=\"https://10.100.130.113:2380\" \\\n  --listen-client-urls=\"https://10.100.130.113:2379\" \\\n  --initial-advertise-peer-urls=\"https://10.100.130.113:2380\" \\\n  --initial-cluster=\"coreos-1=https://10.100.130.111:2380,coreos-2=https://10.100.130.112:2380,coreos-3=https://10.100.130.113:2380\" \\\n  --initial-cluster-state=\"new\" \\\n  --initial-cluster-token=\"etcd-cluster-1\" \\\n  --advertise-client-urls=\"https://10.100.130.113:2379\" \\\n  --cert-file=\"/var/lib/etcd/ssl/etcd-nodes.pem\" \\\n  --key-file=\"/var/lib/etcd/ssl/etcd-nodes-key.pem\" \\\n  --client-cert-auth=true \\\n  --trusted-ca-file=\"/var/lib/etcd/ssl/ca.pem\" \\\n  --peer-cert-file=\"/var/lib/etcd/ssl/etcd-nodes.pem\" \\\n  --peer-key-file=\"/var/lib/etcd/ssl/etcd-nodes-key.pem\" \\\n  --peer-client-cert-auth=true \\\n  --peer-trusted-ca-file=\"/var/lib/etcd/ssl/ca.pem\"",
+            "name": "20-clct-etcd-member.conf"
+          }
+        ],
+        "enable": true,
+        "name": "etcd-member.service"
+      }
+    ]
+  }
+}

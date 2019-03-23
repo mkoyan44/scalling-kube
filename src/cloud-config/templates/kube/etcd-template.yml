@@ -1,0 +1,132 @@
+#cloud-config
+
+update:
+  group:  "alpha"
+locksmith:
+  reboot_strategy:  "etcd-lock"
+  etcd_endpoints:   "{{etcd_endpoints}}"
+  etcd_cafile:      "/var/lib/etcd/ssl/ca.pem"
+  etcd_certfile:    "/var/lib/etcd/ssl/etcd-nodes.pem"
+  etcd_keyfile:     "/var/lib/etcd/ssl/etcd-nodes-key.pem"
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - "{{ ssh_public_key }}"
+
+    - name: mkoyan
+      password_hash: "{{ password_hash }}"
+      ssh_authorized_keys:
+        - "{{ ssh_public_key }}"
+      home_dir: /home/mkoyan
+      groups:
+        - sudo
+        - docker
+      shell: /bin/bash
+
+networkd:
+  units:
+    - name: 00-ens192.network
+      contents: |
+        [Match]
+        Name=ens192
+
+        [Network]
+        DNS=10.100.130.1
+        Address={{ internal_IP }}/24
+        Gateway=10.100.130.1
+storage:
+    - filesystem: "root"
+      path:       "/etc/environment"
+      mode:       0644
+      contents:
+        inline: |
+          COREOS_PRIVATE_IPV4={{ internal_IP }}
+          COREOS_HOSTNAME={{ hostname }}
+          ETCDCTL_CACERT=/var/lib/etcd/ssl/ca.pem
+          ETCDCTL_CERT=/var/lib/etcd/ssl/etcd-nodes.pem
+          ETCDCTL_KEY=/var/lib/etcd/ssl/etcd-nodes-key.pem
+          ETCDCTL_API=3 
+          ETCDCTL_ENDPOINTS={{ etcd_endpoints }}
+    - filesystem: "root"
+      path:       "/etc/hostname"
+      mode:       0644
+      contents:
+        inline: | 
+          {{ hostname }}.mkoyan.local       
+
+    - filesystem: "root"
+      path:       "/etc/hosts"
+      mode:       0644
+      contents:
+        inline: |
+          127.0.0.1	localhost
+          ::1		localhost
+          {{internal_IP}}     {{hostname}}    {{hostname}}.mkoyan.local
+          {%for peer in peers%} 
+          {{peer[1]}}     {{peer[0]}}    {{peer[0]}}.mkoyan.local
+          {%endfor%}
+
+
+    - filesystem: root
+      path: "/etc/motd"
+      mode: 0644
+      contents:
+        inline: | 
+          Hey Mkoyan!
+    - path: /etc/systemd/timesyncd.conf
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          [Time]
+          NTP=10.100.130.1
+    - path: /var/lib/etcd/ssl/ca.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          {{ca}}
+
+    - path: /var/lib/etcd/ssl/etcd-nodes.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          {{etcd_nodes}}
+    - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          {{etcd_nodes_key}}
+etcd:
+  # Human-readable name for this member.
+  name:                        "{{ hostname }}"
+  data_dir:                    "/var/lib/etcd"
+  # list of peer memebr with name=schema
+  initial_cluster:              "{{initial_cluster}}" 
+  # URLs to advertise to the rest of the cluster
+  initial_advertise_peer_urls:  "https://{{ internal_IP }}:2380"
+  # This flag tells the etcd to accept incoming requests from its peers
+  listen_peer_urls:             "https://{{ internal_IP }}:2380"
+  # accept client incoming connection
+  listen_client_urls:           "https://{{ internal_IP }}:2379"
+  advertise_client_urls:        "https://{{ internal_IP }}:2379"
+  # unique cluster id 
+  initial_cluster_token:        "etcd-cluster-1"
+  # if existing join to cluster with toke of $initial_cluster_token
+  initial_cluster_state:        "new"
+  
+  # enable client cert auth
+  client_cert_auth:             true
+  cert_file:                    "/var/lib/etcd/ssl/etcd-nodes.pem"            
+  key_file:                     "/var/lib/etcd/ssl/etcd-nodes-key.pem"
+  trusted_ca_file:              "/var/lib/etcd/ssl/ca.pem"
+  
+  # enable peer cert auth
+  peer_client_cert_auth:        true      
+  peer_cert_file:               "/var/lib/etcd/ssl/etcd-nodes.pem"
+  peer_key_file:                "/var/lib/etcd/ssl/etcd-nodes-key.pem"
+  peer_trusted_ca_file:         "/var/lib/etcd/ssl/ca.pem"

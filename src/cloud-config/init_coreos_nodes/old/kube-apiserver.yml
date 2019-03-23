@@ -1,0 +1,937 @@
+#cloud-config
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops
+
+    - name: mkoyan
+      password_hash: "$6$rounds=4096$J5D/WMPiRMY$Y8SsVHtgfz0nBXY8SrYOqW3qZEVUYF2ZsN5dUYQS0zzx7B/fwHCRdBTqo2Zbn3w7o4vxNs57bMlDQk8JN3A1e/"
+      ssh_authorized_keys:
+        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops"
+      home_dir: /home/mkoyan
+      groups:
+        - sudo
+        - docker
+      shell: /bin/bash
+
+networkd:
+  units:
+    - name: 00-ens192.network
+      contents: |
+        [Match]
+        Name=ens192
+
+        [Network]
+        DNS=10.100.130.1
+        Address=10.100.130.115/24
+        Gateway=10.100.130.1
+storage:
+  files:
+
+    - path: /etc/environment
+      filesystem: "root"
+      mode:       0644
+      contents:
+        inline: |
+          ADVERTISE_IP=10.100.130.115
+          COREOS_HOSTNAME=kube-apiserver
+
+          ETCDCTL_CA_FILE=/var/lib/etcd/ssl/ca.pem
+          ETCDCTL_CERT_FILE=/var/lib/etcd/ssl/etcd-nodes.pem
+          ETCDCTL_KEY_FILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+          ETCDCTL_ENDPOINTS="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+          # ETCDCTL_SSL_DIR=/var/lib/etcd/ssl
+          
+          ETCD_ENDPOINTS="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+          # ETCD_SSL_DIR=/var/lib/etcd/ssl
+
+          FLANNELD_IFACE=10.100.130.115
+          FLANNELD_ETCD_ENDPOINTS="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+          FLANNELD_ETCD_PREFIX="/coreos.com/network"
+
+          LOCKSMITHCTL_ETCD_CAFILE=/var/lib/etcd/ssl/ca.pem
+          LOCKSMITHCTL_ETCD_CERTFILE=/var/lib/etcd/ssl/etcd-nodes.pem
+          LOCKSMITHCTL_ETCD_KEYFILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+          LOCKSMITHCTL_ENDPOINT="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+    - path: /etc/hostname
+      filesystem: "root"
+      mode:       0644
+      contents:
+        inline: kube-apiserver.mkoyan.local       
+    - path: /etc/hosts
+      filesystem: "root"
+      mode:       0644
+      contents:
+        inline: |
+          127.0.0.1	localhost
+          ::1		localhost
+          10.100.130.111 coreos-1 coreos-1.mkoyan.local
+          10.100.130.112 coreos-2 coreos-2.mkoyan.local
+          10.100.130.113 coreos-3 coreos-3.mkoyan.local
+          10.100.130.115 kube-apiserver kube-apiserver.mkoyan.local
+    - path: /etc/motd
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: | 
+          Hey Mkoyan axper!
+    - path: /etc/systemd/timesyncd.conf
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          [Time]
+          NTP=10.100.130.1
+
+
+    - path: /etc/kubernetes/ssl/ca.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIDfzCCAmegAwIBAgIJAIjBdb8zuCZvMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV
+          BAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE
+          CgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4
+          MTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBdMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG
+          WWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDEV
+          MBMGA1UEAwwMbWtveWFuLmxvY2FsMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+          CgKCAQEAw7WmWvK09wnisgJk7iXpAQxMmaN/TmQzx20+7VUlHh3eMtuf0dAbWDav
+          N8gtECURNah75Fb4OAesyc2h+4TrY/PDjNialIR3nTVSFMbyB8TeBGCvnqyDYk5e
+          P7Qr1l58LRN0TxnfeBhP3QFHcAZBj35Y646jvSCeTkcc2VYd+KKJsURQenWxM77h
+          fAnqoMFgfJwzBCB0mSDNSooEqXLWNPZT3Fa37/xQM/V2mRfqHu5M8J6+oRrt/iGv
+          2Xzzg3st/rVawx99Lji25hiKnJeP59s2E9vxdKuL3ra/ZRaIdSCUBlLM1mEJqtJ6
+          o1b3SijwfBtDSVRfRLPZWnZmRYf66wIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAQYw
+          DwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUcPmQa4KCQ46e7YV4F3ne1UaHPeAw
+          DQYJKoZIhvcNAQELBQADggEBAB0yGwbH38Yf1kW2FHWc/oEQWTOfbl3yWUJ1LxO8
+          RjPnt+DZuLTBlsKB4P1/aDXNzwDNxMkDm7yKygp4bgd+rVjnP+iVw24rl5N2gyPj
+          n/cuRbhIEnd/a/76J79tWL+ar/W9zqBCBVBHDiE+Yg6ZmVu1HNHPIcbUjDCwbFBY
+          2nzZw52dheeLiyjF+df5g0bWOgLAj/jtwmhrcA89pJPbilEJoJ2AlQOXga6LPYVH
+          Q6RZdIZQGqsOJRli8tfTAMCeZr/kx/ccJZ3pMUxQlK9HdhSrzo63Ri1HrK0uopUI
+          s2deH14CLHupM/aL3BR08oGjXVcDJVoY4rGoFtc86qn1MaY=
+          -----END CERTIFICATE-----
+    - path: /etc/kubernetes/ssl/apiserver.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIFMDCCBBigAwIBAgIJALWF5+t9HxjjMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV
+          BAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE
+          CgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4
+          MTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBbMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG
+          WWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDET
+          MBEGA1UEAwwKZXRjZC1ub2RlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+          ggEBAN9z0u3cYJRsF0uQ71QtD3Op1Ct4QGRTEpM172ZuJKzZGB3SnKmQfqtQFHGZ
+          RcLS2heper85YPt97qOvHCrak5ZQnt91Ad3DVkjZgSa/ri6CxEGMWeSaUgKM5QCH
+          xWKjZKX/PX2kVYyD0j9o/kOAsTRxy9BxxEf5wpDfr+ZEMZDwC7E3RZ2AdwBo1BmB
+          aZYPSUK80ClduPppEuV7kTndD8JPO3FpfT8HEeOEY4dEV8LcSWRlww3HVup7iAi7
+          4AZDK3ocMsnGmm43r2bJnuAD/2/o0r1p4ZCXBdHwKi0gh6YIknNJBWNUZvf6Bcwh
+          GuDNLL3+xIw6bMCtU1E7W8w/+UsCAwEAAaOCAfMwggHvMA4GA1UdDwEB/wQEAwIF
+          4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAd
+          BgNVHQ4EFgQUXApMLaiXdkbmaftRE9X5D9Ow1TUwggGPBgNVHREEggGGMIIBgoIM
+          bWtveWFuLmxvY2FsghVjb3Jlb3MtMS5ta295YW4ubG9jYWyCFWNvcmVvcy0yLm1r
+          b3lhbi5sb2NhbIIVY29yZW9zLTMubWtveWFuLmxvY2Fsgglsb2NhbGhvc3SCCGNv
+          cmVvcy0xgghjb3Jlb3MtMoIIY29yZW9zLTOCDmNvcmVvcy0xLmxvY2Fsgg5jb3Jl
+          b3MtMi5sb2NhbIIOY29yZW9zLTMubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0
+          ZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4Ika3ViZXJuZXRlcy5k
+          ZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2Fsgg5rdWJlLWFwaXNlcnZlcoIKa3ViZS1h
+          ZG1pbocEfwAAAYcECmSCb4cECmSCcIcECmSCcYcECmSCc4cECmSCdIcECmSCdYcE
+          CmSCdocECgMAAYcECmSCAYcECmSCAocEAAAAAIESYWRtaW5AbWtveWFuLmxvY2Fs
+          MA0GCSqGSIb3DQEBCwUAA4IBAQCbbT8TsSN6gHhZVKdO9IsgvJVCycEP2XhY9RwC
+          vNIEV0ywAJ1nk4EmlHkqmSuWUuNfy3Yrgs/6aGAdpVzHIlPfo7OYgNgqCSmqB6l1
+          WH+wD9Tbsx3c0he/Gi9+e+8t0HqPUmxR06O0RbPjokWuMyPWw1ARUrl3hVMwcPkb
+          /0jkIzjbv+Zp9WaqcvwvD5JxiD4LH45XjgPP6buvB8Iq0bwG8PTPbeonhhL7G9Im
+          6ywEodEcayAJ/k9qWozPDCuOe5B3KgSdL9YgW8Y29nq4gfIFhewVGELX9tj1No+q
+          w1iH/3SwpQk1UJTxEi+0eZth2Hcs4jtjQZ0oM6qwbb+tB+Ql
+          -----END CERTIFICATE-----
+    - path: /etc/kubernetes/ssl/apiserver-key.pem
+      filesystem: root
+      mode: 0600
+      contents:
+        inline: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEA33PS7dxglGwXS5DvVC0Pc6nUK3hAZFMSkzXvZm4krNkYHdKc
+          qZB+q1AUcZlFwtLaF6l6vzlg+33uo68cKtqTllCe33UB3cNWSNmBJr+uLoLEQYxZ
+          5JpSAozlAIfFYqNkpf89faRVjIPSP2j+Q4CxNHHL0HHER/nCkN+v5kQxkPALsTdF
+          nYB3AGjUGYFplg9JQrzQKV24+mkS5XuROd0Pwk87cWl9PwcR44Rjh0RXwtxJZGXD
+          DcdW6nuICLvgBkMrehwyycaabjevZsme4AP/b+jSvWnhkJcF0fAqLSCHpgiSc0kF
+          Y1Rm9/oFzCEa4M0svf7EjDpswK1TUTtbzD/5SwIDAQABAoIBAE7wK+O7pqLITLJ1
+          URb7lCnYJQv2P0kxz64Rr7EP2AT37H0cmhuM4DLE53P6IZrhwgn55VMIgipWIqfQ
+          hLLe5KSFdpqaSz58c07pB6cYr//eUlaVrmwD2FTuUTgOvrxJ3JSHxsFL/KzXJL8h
+          6DEQlYlhag8JIb4LjaCAZTODg78fZPYDrvuK+0atRwxN1us1wAkP+2XgApFT0XUg
+          KMQEoBJUYhCfIOjkWLOo4XS1Bzb/sK7dSvawKWfuAs35DO5V3ZY1eb24AA1MWHsl
+          BeqIn/oleagBeZo/fEZF3tZgeASKn9uJRhwkgVwn7Ifm8BXCM/+ZImgsxaAMY3Lj
+          3N3sGoECgYEA9axvsOfV1OxragA8r1fYM3CHyUNWLZFJEIU+95/6rJsdTlj8YZyy
+          oYlUs5TtQDTs3lxPqy4Di7DQPw/7m2FNimyNq8IMeFPATaHr4fEAQ4PnqMzHA0mF
+          YIl13crcOoGcsyGgNkVECL+EYRGJTcFFnQfTR8QbmuXEyQTGBlzxBHUCgYEA6NhH
+          FVZf5f8E3sIrvxi+1W+p65ak6HRgjbAviApBhhsdiDJrf65NWDP0XP+22YAPLag4
+          ITTqia0dRz81zEI1XVY8cCwnI6MWMK4SRVeW0DyeZtPaOcqYYoV9mnIyc00VT5f4
+          wfczmjA3+uPGxefzuibl78OHlFKoz6iNOGaKTr8CgYB9EqXmRZFKjnZ9B9PdXPaX
+          8aFfqKV2G3I8M+oDvXGscGfyHEGZHGKg9L6nkplax9cTuaFhv9JUStcqU+O/jkEg
+          yPUzTV514AWWQGpLpBuDQ+Mrv91N4h9CL5lPKlkGfDgfxm2/U3I4lfA6Tug9Krlb
+          IcHB1qhLKtENmh2K3cRihQKBgFz2BCMzsePMVfBtizOnOIFULH3fTgV0eRv4bHGe
+          zpww9TBsGNkICN8fFv+OJD1f0C+FSquPSdgfomHQjbT39gBGrqiGKDYlJXXX+Xlv
+          x8lpekBJcoXCKeajrwrbbuLzsn9tiCZAgHydpavoBnL68Sav4vs/kECaY8VMYN1U
+          qwFXAoGBAIzIx1JyKyXEfQrNQrt8hU7rk8XFBwxG0w88MwUFuYJyFiRvqYX+9cV3
+          FyWdj5bQs6OaiziiIN28U2cGUqQ5GOuaybpFBk5/OgFxinDU2fcEaBWGxSHZkF0G
+          cwRhdYxrAXJ5CPdcX2TsxqhlQrELxYvNV1d+eT/mULr2wbHhYIr6
+          -----END RSA PRIVATE KEY-----
+    - path: /var/lib/etcd/ssl/ca.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIDfzCCAmegAwIBAgIJAIjBdb8zuCZvMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV
+          BAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE
+          CgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4
+          MTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBdMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG
+          WWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDEV
+          MBMGA1UEAwwMbWtveWFuLmxvY2FsMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+          CgKCAQEAw7WmWvK09wnisgJk7iXpAQxMmaN/TmQzx20+7VUlHh3eMtuf0dAbWDav
+          N8gtECURNah75Fb4OAesyc2h+4TrY/PDjNialIR3nTVSFMbyB8TeBGCvnqyDYk5e
+          P7Qr1l58LRN0TxnfeBhP3QFHcAZBj35Y646jvSCeTkcc2VYd+KKJsURQenWxM77h
+          fAnqoMFgfJwzBCB0mSDNSooEqXLWNPZT3Fa37/xQM/V2mRfqHu5M8J6+oRrt/iGv
+          2Xzzg3st/rVawx99Lji25hiKnJeP59s2E9vxdKuL3ra/ZRaIdSCUBlLM1mEJqtJ6
+          o1b3SijwfBtDSVRfRLPZWnZmRYf66wIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAQYw
+          DwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUcPmQa4KCQ46e7YV4F3ne1UaHPeAw
+          DQYJKoZIhvcNAQELBQADggEBAB0yGwbH38Yf1kW2FHWc/oEQWTOfbl3yWUJ1LxO8
+          RjPnt+DZuLTBlsKB4P1/aDXNzwDNxMkDm7yKygp4bgd+rVjnP+iVw24rl5N2gyPj
+          n/cuRbhIEnd/a/76J79tWL+ar/W9zqBCBVBHDiE+Yg6ZmVu1HNHPIcbUjDCwbFBY
+          2nzZw52dheeLiyjF+df5g0bWOgLAj/jtwmhrcA89pJPbilEJoJ2AlQOXga6LPYVH
+          Q6RZdIZQGqsOJRli8tfTAMCeZr/kx/ccJZ3pMUxQlK9HdhSrzo63Ri1HrK0uopUI
+          s2deH14CLHupM/aL3BR08oGjXVcDJVoY4rGoFtc86qn1MaY=
+          -----END CERTIFICATE-----
+    - path: /var/lib/etcd/ssl/etcd-nodes.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIFMDCCBBigAwIBAgIJALWF5+t9HxjjMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV
+          BAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE
+          CgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4
+          MTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBbMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG
+          WWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDET
+          MBEGA1UEAwwKZXRjZC1ub2RlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+          ggEBAN9z0u3cYJRsF0uQ71QtD3Op1Ct4QGRTEpM172ZuJKzZGB3SnKmQfqtQFHGZ
+          RcLS2heper85YPt97qOvHCrak5ZQnt91Ad3DVkjZgSa/ri6CxEGMWeSaUgKM5QCH
+          xWKjZKX/PX2kVYyD0j9o/kOAsTRxy9BxxEf5wpDfr+ZEMZDwC7E3RZ2AdwBo1BmB
+          aZYPSUK80ClduPppEuV7kTndD8JPO3FpfT8HEeOEY4dEV8LcSWRlww3HVup7iAi7
+          4AZDK3ocMsnGmm43r2bJnuAD/2/o0r1p4ZCXBdHwKi0gh6YIknNJBWNUZvf6Bcwh
+          GuDNLL3+xIw6bMCtU1E7W8w/+UsCAwEAAaOCAfMwggHvMA4GA1UdDwEB/wQEAwIF
+          4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAd
+          BgNVHQ4EFgQUXApMLaiXdkbmaftRE9X5D9Ow1TUwggGPBgNVHREEggGGMIIBgoIM
+          bWtveWFuLmxvY2FsghVjb3Jlb3MtMS5ta295YW4ubG9jYWyCFWNvcmVvcy0yLm1r
+          b3lhbi5sb2NhbIIVY29yZW9zLTMubWtveWFuLmxvY2Fsgglsb2NhbGhvc3SCCGNv
+          cmVvcy0xgghjb3Jlb3MtMoIIY29yZW9zLTOCDmNvcmVvcy0xLmxvY2Fsgg5jb3Jl
+          b3MtMi5sb2NhbIIOY29yZW9zLTMubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0
+          ZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4Ika3ViZXJuZXRlcy5k
+          ZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2Fsgg5rdWJlLWFwaXNlcnZlcoIKa3ViZS1h
+          ZG1pbocEfwAAAYcECmSCb4cECmSCcIcECmSCcYcECmSCc4cECmSCdIcECmSCdYcE
+          CmSCdocECgMAAYcECmSCAYcECmSCAocEAAAAAIESYWRtaW5AbWtveWFuLmxvY2Fs
+          MA0GCSqGSIb3DQEBCwUAA4IBAQCbbT8TsSN6gHhZVKdO9IsgvJVCycEP2XhY9RwC
+          vNIEV0ywAJ1nk4EmlHkqmSuWUuNfy3Yrgs/6aGAdpVzHIlPfo7OYgNgqCSmqB6l1
+          WH+wD9Tbsx3c0he/Gi9+e+8t0HqPUmxR06O0RbPjokWuMyPWw1ARUrl3hVMwcPkb
+          /0jkIzjbv+Zp9WaqcvwvD5JxiD4LH45XjgPP6buvB8Iq0bwG8PTPbeonhhL7G9Im
+          6ywEodEcayAJ/k9qWozPDCuOe5B3KgSdL9YgW8Y29nq4gfIFhewVGELX9tj1No+q
+          w1iH/3SwpQk1UJTxEi+0eZth2Hcs4jtjQZ0oM6qwbb+tB+Ql
+          -----END CERTIFICATE-----
+    - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
+      filesystem: root
+      mode: 0600
+      contents:
+        inline: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEA33PS7dxglGwXS5DvVC0Pc6nUK3hAZFMSkzXvZm4krNkYHdKc
+          qZB+q1AUcZlFwtLaF6l6vzlg+33uo68cKtqTllCe33UB3cNWSNmBJr+uLoLEQYxZ
+          5JpSAozlAIfFYqNkpf89faRVjIPSP2j+Q4CxNHHL0HHER/nCkN+v5kQxkPALsTdF
+          nYB3AGjUGYFplg9JQrzQKV24+mkS5XuROd0Pwk87cWl9PwcR44Rjh0RXwtxJZGXD
+          DcdW6nuICLvgBkMrehwyycaabjevZsme4AP/b+jSvWnhkJcF0fAqLSCHpgiSc0kF
+          Y1Rm9/oFzCEa4M0svf7EjDpswK1TUTtbzD/5SwIDAQABAoIBAE7wK+O7pqLITLJ1
+          URb7lCnYJQv2P0kxz64Rr7EP2AT37H0cmhuM4DLE53P6IZrhwgn55VMIgipWIqfQ
+          hLLe5KSFdpqaSz58c07pB6cYr//eUlaVrmwD2FTuUTgOvrxJ3JSHxsFL/KzXJL8h
+          6DEQlYlhag8JIb4LjaCAZTODg78fZPYDrvuK+0atRwxN1us1wAkP+2XgApFT0XUg
+          KMQEoBJUYhCfIOjkWLOo4XS1Bzb/sK7dSvawKWfuAs35DO5V3ZY1eb24AA1MWHsl
+          BeqIn/oleagBeZo/fEZF3tZgeASKn9uJRhwkgVwn7Ifm8BXCM/+ZImgsxaAMY3Lj
+          3N3sGoECgYEA9axvsOfV1OxragA8r1fYM3CHyUNWLZFJEIU+95/6rJsdTlj8YZyy
+          oYlUs5TtQDTs3lxPqy4Di7DQPw/7m2FNimyNq8IMeFPATaHr4fEAQ4PnqMzHA0mF
+          YIl13crcOoGcsyGgNkVECL+EYRGJTcFFnQfTR8QbmuXEyQTGBlzxBHUCgYEA6NhH
+          FVZf5f8E3sIrvxi+1W+p65ak6HRgjbAviApBhhsdiDJrf65NWDP0XP+22YAPLag4
+          ITTqia0dRz81zEI1XVY8cCwnI6MWMK4SRVeW0DyeZtPaOcqYYoV9mnIyc00VT5f4
+          wfczmjA3+uPGxefzuibl78OHlFKoz6iNOGaKTr8CgYB9EqXmRZFKjnZ9B9PdXPaX
+          8aFfqKV2G3I8M+oDvXGscGfyHEGZHGKg9L6nkplax9cTuaFhv9JUStcqU+O/jkEg
+          yPUzTV514AWWQGpLpBuDQ+Mrv91N4h9CL5lPKlkGfDgfxm2/U3I4lfA6Tug9Krlb
+          IcHB1qhLKtENmh2K3cRihQKBgFz2BCMzsePMVfBtizOnOIFULH3fTgV0eRv4bHGe
+          zpww9TBsGNkICN8fFv+OJD1f0C+FSquPSdgfomHQjbT39gBGrqiGKDYlJXXX+Xlv
+          x8lpekBJcoXCKeajrwrbbuLzsn9tiCZAgHydpavoBnL68Sav4vs/kECaY8VMYN1U
+          qwFXAoGBAIzIx1JyKyXEfQrNQrt8hU7rk8XFBwxG0w88MwUFuYJyFiRvqYX+9cV3
+          FyWdj5bQs6OaiziiIN28U2cGUqQ5GOuaybpFBk5/OgFxinDU2fcEaBWGxSHZkF0G
+          cwRhdYxrAXJ5CPdcX2TsxqhlQrELxYvNV1d+eT/mULr2wbHhYIr6
+          -----END RSA PRIVATE KEY-----
+    - path: /etc/docker/ca.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIDfzCCAmegAwIBAgIJAIjBdb8zuCZvMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV
+          BAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE
+          CgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4
+          MTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBdMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG
+          WWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDEV
+          MBMGA1UEAwwMbWtveWFuLmxvY2FsMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+          CgKCAQEAw7WmWvK09wnisgJk7iXpAQxMmaN/TmQzx20+7VUlHh3eMtuf0dAbWDav
+          N8gtECURNah75Fb4OAesyc2h+4TrY/PDjNialIR3nTVSFMbyB8TeBGCvnqyDYk5e
+          P7Qr1l58LRN0TxnfeBhP3QFHcAZBj35Y646jvSCeTkcc2VYd+KKJsURQenWxM77h
+          fAnqoMFgfJwzBCB0mSDNSooEqXLWNPZT3Fa37/xQM/V2mRfqHu5M8J6+oRrt/iGv
+          2Xzzg3st/rVawx99Lji25hiKnJeP59s2E9vxdKuL3ra/ZRaIdSCUBlLM1mEJqtJ6
+          o1b3SijwfBtDSVRfRLPZWnZmRYf66wIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAQYw
+          DwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUcPmQa4KCQ46e7YV4F3ne1UaHPeAw
+          DQYJKoZIhvcNAQELBQADggEBAB0yGwbH38Yf1kW2FHWc/oEQWTOfbl3yWUJ1LxO8
+          RjPnt+DZuLTBlsKB4P1/aDXNzwDNxMkDm7yKygp4bgd+rVjnP+iVw24rl5N2gyPj
+          n/cuRbhIEnd/a/76J79tWL+ar/W9zqBCBVBHDiE+Yg6ZmVu1HNHPIcbUjDCwbFBY
+          2nzZw52dheeLiyjF+df5g0bWOgLAj/jtwmhrcA89pJPbilEJoJ2AlQOXga6LPYVH
+          Q6RZdIZQGqsOJRli8tfTAMCeZr/kx/ccJZ3pMUxQlK9HdhSrzo63Ri1HrK0uopUI
+          s2deH14CLHupM/aL3BR08oGjXVcDJVoY4rGoFtc86qn1MaY=
+          -----END CERTIFICATE-----
+    - path: /etc/docker/server.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIFMDCCBBigAwIBAgIJALWF5+t9HxjjMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV
+          BAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE
+          CgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4
+          MTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBbMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG
+          WWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDET
+          MBEGA1UEAwwKZXRjZC1ub2RlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+          ggEBAN9z0u3cYJRsF0uQ71QtD3Op1Ct4QGRTEpM172ZuJKzZGB3SnKmQfqtQFHGZ
+          RcLS2heper85YPt97qOvHCrak5ZQnt91Ad3DVkjZgSa/ri6CxEGMWeSaUgKM5QCH
+          xWKjZKX/PX2kVYyD0j9o/kOAsTRxy9BxxEf5wpDfr+ZEMZDwC7E3RZ2AdwBo1BmB
+          aZYPSUK80ClduPppEuV7kTndD8JPO3FpfT8HEeOEY4dEV8LcSWRlww3HVup7iAi7
+          4AZDK3ocMsnGmm43r2bJnuAD/2/o0r1p4ZCXBdHwKi0gh6YIknNJBWNUZvf6Bcwh
+          GuDNLL3+xIw6bMCtU1E7W8w/+UsCAwEAAaOCAfMwggHvMA4GA1UdDwEB/wQEAwIF
+          4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADAd
+          BgNVHQ4EFgQUXApMLaiXdkbmaftRE9X5D9Ow1TUwggGPBgNVHREEggGGMIIBgoIM
+          bWtveWFuLmxvY2FsghVjb3Jlb3MtMS5ta295YW4ubG9jYWyCFWNvcmVvcy0yLm1r
+          b3lhbi5sb2NhbIIVY29yZW9zLTMubWtveWFuLmxvY2Fsgglsb2NhbGhvc3SCCGNv
+          cmVvcy0xgghjb3Jlb3MtMoIIY29yZW9zLTOCDmNvcmVvcy0xLmxvY2Fsgg5jb3Jl
+          b3MtMi5sb2NhbIIOY29yZW9zLTMubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0
+          ZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4Ika3ViZXJuZXRlcy5k
+          ZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2Fsgg5rdWJlLWFwaXNlcnZlcoIKa3ViZS1h
+          ZG1pbocEfwAAAYcECmSCb4cECmSCcIcECmSCcYcECmSCc4cECmSCdIcECmSCdYcE
+          CmSCdocECgMAAYcECmSCAYcECmSCAocEAAAAAIESYWRtaW5AbWtveWFuLmxvY2Fs
+          MA0GCSqGSIb3DQEBCwUAA4IBAQCbbT8TsSN6gHhZVKdO9IsgvJVCycEP2XhY9RwC
+          vNIEV0ywAJ1nk4EmlHkqmSuWUuNfy3Yrgs/6aGAdpVzHIlPfo7OYgNgqCSmqB6l1
+          WH+wD9Tbsx3c0he/Gi9+e+8t0HqPUmxR06O0RbPjokWuMyPWw1ARUrl3hVMwcPkb
+          /0jkIzjbv+Zp9WaqcvwvD5JxiD4LH45XjgPP6buvB8Iq0bwG8PTPbeonhhL7G9Im
+          6ywEodEcayAJ/k9qWozPDCuOe5B3KgSdL9YgW8Y29nq4gfIFhewVGELX9tj1No+q
+          w1iH/3SwpQk1UJTxEi+0eZth2Hcs4jtjQZ0oM6qwbb+tB+Ql
+          -----END CERTIFICATE-----
+    - path: /etc/docker/server-key.pem
+      filesystem: root
+      mode: 0600
+      contents:
+        inline: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEA33PS7dxglGwXS5DvVC0Pc6nUK3hAZFMSkzXvZm4krNkYHdKc
+          qZB+q1AUcZlFwtLaF6l6vzlg+33uo68cKtqTllCe33UB3cNWSNmBJr+uLoLEQYxZ
+          5JpSAozlAIfFYqNkpf89faRVjIPSP2j+Q4CxNHHL0HHER/nCkN+v5kQxkPALsTdF
+          nYB3AGjUGYFplg9JQrzQKV24+mkS5XuROd0Pwk87cWl9PwcR44Rjh0RXwtxJZGXD
+          DcdW6nuICLvgBkMrehwyycaabjevZsme4AP/b+jSvWnhkJcF0fAqLSCHpgiSc0kF
+          Y1Rm9/oFzCEa4M0svf7EjDpswK1TUTtbzD/5SwIDAQABAoIBAE7wK+O7pqLITLJ1
+          URb7lCnYJQv2P0kxz64Rr7EP2AT37H0cmhuM4DLE53P6IZrhwgn55VMIgipWIqfQ
+          hLLe5KSFdpqaSz58c07pB6cYr//eUlaVrmwD2FTuUTgOvrxJ3JSHxsFL/KzXJL8h
+          6DEQlYlhag8JIb4LjaCAZTODg78fZPYDrvuK+0atRwxN1us1wAkP+2XgApFT0XUg
+          KMQEoBJUYhCfIOjkWLOo4XS1Bzb/sK7dSvawKWfuAs35DO5V3ZY1eb24AA1MWHsl
+          BeqIn/oleagBeZo/fEZF3tZgeASKn9uJRhwkgVwn7Ifm8BXCM/+ZImgsxaAMY3Lj
+          3N3sGoECgYEA9axvsOfV1OxragA8r1fYM3CHyUNWLZFJEIU+95/6rJsdTlj8YZyy
+          oYlUs5TtQDTs3lxPqy4Di7DQPw/7m2FNimyNq8IMeFPATaHr4fEAQ4PnqMzHA0mF
+          YIl13crcOoGcsyGgNkVECL+EYRGJTcFFnQfTR8QbmuXEyQTGBlzxBHUCgYEA6NhH
+          FVZf5f8E3sIrvxi+1W+p65ak6HRgjbAviApBhhsdiDJrf65NWDP0XP+22YAPLag4
+          ITTqia0dRz81zEI1XVY8cCwnI6MWMK4SRVeW0DyeZtPaOcqYYoV9mnIyc00VT5f4
+          wfczmjA3+uPGxefzuibl78OHlFKoz6iNOGaKTr8CgYB9EqXmRZFKjnZ9B9PdXPaX
+          8aFfqKV2G3I8M+oDvXGscGfyHEGZHGKg9L6nkplax9cTuaFhv9JUStcqU+O/jkEg
+          yPUzTV514AWWQGpLpBuDQ+Mrv91N4h9CL5lPKlkGfDgfxm2/U3I4lfA6Tug9Krlb
+          IcHB1qhLKtENmh2K3cRihQKBgFz2BCMzsePMVfBtizOnOIFULH3fTgV0eRv4bHGe
+          zpww9TBsGNkICN8fFv+OJD1f0C+FSquPSdgfomHQjbT39gBGrqiGKDYlJXXX+Xlv
+          x8lpekBJcoXCKeajrwrbbuLzsn9tiCZAgHydpavoBnL68Sav4vs/kECaY8VMYN1U
+          qwFXAoGBAIzIx1JyKyXEfQrNQrt8hU7rk8XFBwxG0w88MwUFuYJyFiRvqYX+9cV3
+          FyWdj5bQs6OaiziiIN28U2cGUqQ5GOuaybpFBk5/OgFxinDU2fcEaBWGxSHZkF0G
+          cwRhdYxrAXJ5CPdcX2TsxqhlQrELxYvNV1d+eT/mULr2wbHhYIr6
+          -----END RSA PRIVATE KEY-----
+
+
+    - path: /etc/kubernetes/cni/net.d/10-flannel.conf
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          {
+              "name": "podnet",
+              "type": "flannel",
+              "delegate": {
+                  "forceAddress": true,
+                  "isDefaultGateway": true,
+                  "hairpinMode": true
+              }
+          }
+    - path: /etc/flannel/options.env
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          # ETCDCTL parameters
+          ADVERTISE_IP=10.100.130.115
+          COREOS_HOSTNAME=kube-apiserver
+
+          ETCDCTL_CA_FILE=/var/lib/etcd/ssl/ca.pem
+          ETCDCTL_CERT_FILE=/var/lib/etcd/ssl/etcd-nodes.pem
+          ETCDCTL_KEY_FILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+          ETCDCTL_ENDPOINTS="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+          ETCDCTL_SSL_DIR=/var/lib/etcd/ssl
+          
+          ETCD_ENDPOINTS="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+          ETCD_SSL_DIR=/var/lib/etcd/ssl
+
+          FLANNELD_IFACE=10.100.130.115
+          FLANNELD_ETCD_ENDPOINTS="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+          FLANNELD_ETCD_PREFIX="/coreos.com/network"
+
+          LOCKSMITHCTL_ETCD_CAFILE=/var/lib/etcd/ssl/ca.pem
+          LOCKSMITHCTL_ETCD_CERTFILE=/var/lib/etcd/ssl/etcd-nodes.pem
+          LOCKSMITHCTL_ETCD_KEYFILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+          LOCKSMITHCTL_ENDPOINT="https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379"
+    - path: /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          [Service]
+          ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
+          ExecStartPre=/usr/bin/ln -sf /etc/kubernetes/ssl /etc/kubernetes/pki
+    
+    
+    - path: /etc/kubernetes/cni/docker_opts_cni.env
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          DOCKER_OPT_BIP=""
+          DOCKER_OPT_IPMASQ=""
+
+    - path: /etc/systemd/system/docker.service.d/40-flannel.conf
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          [Unit]
+          Requires=flanneld.service
+          After=flanneld.service
+          [Service]
+          EnvironmentFile=/etc/kubernetes/cni/docker_opts_cni.env
+    
+    - path: /etc/kubernetes/kubelet.env
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          KUBELET_IMAGE_URL=gcr.io/google_containers/hyperkube
+          KUBELET_VERSION=v1.13.1
+  
+    - path: /etc/kubernetes/ssl/kubeconfig.yaml 
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: v1  
+          kind: Config
+          clusters:
+          - name: local
+            cluster:
+              server: https://10.100.130.115:443
+              certificate-authority: /etc/kubernetes/ssl/ca.pem
+          users:
+          - name: kubelet
+            user:
+              client-certificate: /etc/kubernetes/ssl/apiserver.pem
+              client-key: /etc/kubernetes/ssl/apiserver-key.pem
+          contexts:
+          - context:
+              cluster: local
+              user: kubelet
+
+
+    - path: /etc/kubernetes/ssl/bootstrap-kubeconfig.yaml
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - name: local
+            cluster:
+              certificate-authority: /etc/kubernetes/ssl/ca.pem
+              server: https://10.100.130.115:443
+          contexts:
+          - context:
+              cluster: local
+              user: tls-bootstrap-token-user
+            name: tls-bootstrap-token-user@kubernets
+          current-context: tls-bootstrap-token-user@kubernets
+          preferences: {}
+          users:
+          - name: tls-bootstrap-token-user
+            user:
+              token: d6759f25863342e68afb0b2eab2027cd
+    - path: /etc/kubernetes/ssl/token-bootstrap-auth.csv
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          d6759f25863342e68afb0b2eab2027cd,kubelet-bootstrap,10001,'system:node-bootstrapper'
+
+    - path: /etc/kubernetes/config.yaml
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          address: 0.0.0.0
+          apiVersion: kubelet.config.k8s.io/v1beta1
+          authentication:
+            anonymous:
+              enabled: false
+            webhook:
+              cacheTTL: 2m0s
+              enabled: true
+            x509:
+              clientCAFile: /etc/kubernetes/ssl/ca.pem
+          authorization:
+            mode: Webhook
+            webhook:
+              cacheAuthorizedTTL: 5m0s
+              cacheUnauthorizedTTL: 30s
+          cgroupDriver: cgroupfs
+          cgroupsPerQOS: true
+          clusterDNS:
+          - 10.3.0.10
+          clusterDomain: cluter.local
+          containerLogMaxFiles: 5
+          containerLogMaxSize: 10Mi
+          contentType: application/vnd.kubernetes.protobuf
+          cpuCFSQuota: true
+          cpuManagerPolicy: none
+          cpuManagerReconcilePeriod: 10s
+          enableControllerAttachDetach: true
+          enableDebuggingHandlers: true
+          enforceNodeAllocatable:
+          - pods
+          eventBurst: 10
+          eventRecordQPS: 5
+          evictionHard:
+            imagefs.available: 15%
+            memory.available: 100Mi
+            nodefs.available: 10%
+            nodefs.inodesFree: 5%
+          evictionPressureTransitionPeriod: 5m0s
+          failSwapOn: true
+          fileCheckFrequency: 20s
+          hairpinMode: promiscuous-bridge
+          healthzBindAddress: 127.0.0.1
+          healthzPort: 10248
+          httpCheckFrequency: 20s
+          imageGCHighThresholdPercent: 85
+          imageGCLowThresholdPercent: 80
+          imageMinimumGCAge: 2m0s
+          iptablesDropBit: 15
+          iptablesMasqueradeBit: 14
+          kind: KubeletConfiguration
+          tlsCertFile: "/etc/kubernetes/ssl/apiserver.pem"
+          tlsPrivateKeyFile: "/etc/kubernetes/ssl/apiserver-key.pem"
+          RotateCertificates: true
+          ServerTLSBootstrap: true
+          kubeAPIBurst: 10
+          kubeAPIQPS: 5
+          makeIPTablesUtilChains: true
+          maxOpenFiles: 1000000
+          maxPods: 110
+          nodeStatusUpdateFrequency: 10s
+          oomScoreAdj: -999
+          podPidsLimit: -1
+          port: 10250
+          registryBurst: 10
+          registryPullQPS: 5
+          resolvConf: /etc/resolv.conf
+          rotateCertificates: true
+          runtimeRequestTimeout: 2m0s
+          serializeImagePulls: true
+          staticPodPath: /etc/kubernetes/manifests
+          streamingConnectionIdleTimeout: 4h0m0s
+          syncFrequency: 1m0s
+          volumeStatsAggPeriod: 1m0s
+
+
+    - path: /etc/kubernetes/manifests/kube-apiserver.yaml
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: kube-apiserver
+            namespace: kube-system
+          spec:
+            hostNetwork: true
+            containers:
+            - name: kube-apiserver
+              image: gcr.io/google_containers/hyperkube:v1.13.1
+              command:
+              - /hyperkube
+              - apiserver
+              - --bind-address=0.0.0.0
+              - --etcd-servers={{etcd_endpoints}}
+              - --allow-privileged=true
+              - --service-cluster-ip-range=10.3.0.0/21
+              - --secure-port=443
+              - --advertise-address={{internal_}}
+              - --storage-backend=etcd3
+              - --storage-media-type=application/json
+              - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota,DefaultStorageClass,PersistentVolumeLabel
+              #- --admission-control=Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuotaInitializers,NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota
+              - --etcd-certfile=/var/lib/etcd/ssl/etcd-nodes.pem
+              - --etcd-keyfile=/var/lib/etcd/ssl/etcd-nodes-key.pem
+              - --etcd-cafile=/var/lib/etcd/ssl/ca.pem
+              - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
+              - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+              - --kubelet-certificate-authority=/etc/kubernetes/ssl/ca.pem
+              - --kubelet-client-certificate=/etc/kubernetes/ssl/apiserver.pem
+              - --kubelet-client-key=/etc/kubernetes/ssl/apiserver-key.pem
+              - --service-account-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+              - --client-ca-file=/etc/kubernetes/ssl/ca.pem
+              - --runtime-config=extensions/v1beta1/networkpolicies=true,extensions/v1beta1=true,rbac.authorization.k8s.io/v1
+              - --authorization-mode=Node,RBAC
+              - --token-auth-file=/etc/kubernetes/ssl/token-bootstrap-auth.csv
+              - --anonymous-auth=false
+              - --audit-log-path=/var/log/kubernetes/kube-apiserver-audit.log
+              - --audit-log-maxage=30
+              - --audit-log-maxbackup=3
+              - --audit-log-maxsize=100
+              - --v=3
+              livenessProbe:
+                httpGet:
+                  host: 127.0.0.1
+                  port: 8080
+                  path: /healthz
+                initialDelaySeconds: 15
+                timeoutSeconds: 15
+              ports:
+              - containerPort: 443
+                hostPort: 443
+                name: https
+              - containerPort: 8080
+                hostPort: 8080
+                name: local
+              volumeMounts:
+              - mountPath: /etc/kubernetes/ssl
+                name: ssl-certs-kubernetes
+                readOnly: true
+              - mountPath: /var/lib/etcd/ssl
+                name: ssl-certs-etcd
+                readOnly: true
+              - mountPath: /etc/ssl/certs
+                name: ssl-certs-host
+                readOnly: true
+              - mountPath: /var/log/kubernetes
+                name: var-log-kubernetes
+                readOnly: false
+            volumes:
+            - hostPath:
+                path: /etc/kubernetes/ssl
+              name: ssl-certs-kubernetes
+            - hostPath:
+                path: /var/lib/etcd/ssl
+              name: ssl-certs-etcd
+            - hostPath:
+                path: /usr/share/ca-certificates
+              name: ssl-certs-host
+            - hostPath:
+                path: /var/log/kubernetes
+              name: var-log-kubernetes
+
+    - path: /etc/kubernetes/manifests/kube-controller-manager.yaml
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: kube-controller-manager
+            namespace: kube-system
+          spec:
+                hostNetwork: true
+                containers:
+                - name: kube-controller-manager
+                  image: gcr.io/google_containers/hyperkube:v1.13.1
+                  command:
+                  - ./hyperkube
+                  - controller-manager
+                  - --master=https://10.100.130.115:443
+                  - --kubeconfig=/etc/kubernetes/ssl/kubeconfig.yaml
+                  - --authentication-kubeconfig=/etc/kubernetes/ssl/kubeconfig.yaml
+                  - --authorization-kubeconfig=/etc/kubernetes/ssl/kubeconfig.yaml
+                  - --client-ca-file=/etc/kubernetes/ssl/ca.pem
+                  - --leader-elect=true
+                  - --allocate-node-cidrs=true
+                  - --cluster-cidr=10.244.0.0/16
+                  - --service-cluster-ip-range=10.3.0.0/21
+                  - --root-ca-file=/etc/kubernetes/ssl/ca.pem
+                  - --tls-cert-file=/etc/kubernetes/ssl/ca.pem
+                  - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+                  - --cluster-signing-cert-file=/etc/kubernetes/ssl/apiserver.pem
+                  - --cluster-signing-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+                  - --service-account-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+                  - --use-service-account-credentials=true
+                  - --experimental-cluster-signing-duration=87600h0m0s
+                  livenessProbe:
+                    httpGet:
+                      host: 127.0.0.1
+                      path: /healthz
+                      port: 10252  # Note: Using default port. Update if --port option is set differently.
+                    initialDelaySeconds: 15
+                    timeoutSeconds: 5
+                  volumeMounts:
+                  - mountPath: /etc/ssl/certs
+                    name: ssl-host
+                    readOnly: true
+                  - mountPath: /var/log/kube-controller-manager.log
+                    name: logfile
+                    readOnly: false
+                  - mountPath: /etc/kubernetes/ssl
+                    name: kube-ssl
+                    readOnly: true
+                volumes:
+                - hostPath:
+                    path: /usr/share/ca-certificates
+                  name: ssl-host
+                - hostPath:
+                    path: /var/log/kube-controller-manager.log
+                  name: logfile
+                - hostPath:
+                    path: /etc/kubernetes/ssl
+                  name: kube-ssl
+
+    - path: /etc/kubernetes/manifests/kube-proxy.yaml
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: kube-proxy
+            namespace: kube-system
+            labels:
+              tier: node
+              k8s-app: kube-proxy
+          spec:
+                hostNetwork: true
+                containers:
+                - name: kube-proxy
+                  image: gcr.io/google_containers/hyperkube:v1.13.1
+                  command:
+                  - ./hyperkube
+                  - proxy
+                  - --master=https://10.100.130.115:443
+                  - --kubeconfig=/etc/kubernetes/ssl/kubeconfig.yaml
+                  - --logtostderr=true
+                  - --proxy-mode=iptables
+                  - --masquerade-all
+                  - --hostname-override=10.100.130.115
+                  - --cluster-cidr=10.244.0.0/16
+                  - --v=3
+                  env:
+                    - name: NODE_NAME
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: spec.nodeName
+                  securityContext:
+                    privileged: true
+                  volumeMounts:
+                  - mountPath: /etc/ssl/certs
+                    name: ssl-certs-host
+                    readOnly: true
+                  - name: kube-ssl
+                    mountPath: /etc/kubernetes/ssl
+                    readOnly: true
+                tolerations:
+                - key: "node-role.kubernetes.io/master"
+                  operator: "Exists"
+                  effect: "NoSchedule"
+                volumes:
+                - hostPath:
+                    path: /usr/share/ca-certificates
+                  name: ssl-certs-host
+                - name: kube-ssl
+                  hostPath:
+                    path: /etc/kubernetes/ssl
+
+    - path: /etc/kubernetes/manifests/kube-scheduler.yaml
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: kube-scheduler
+            namespace: kube-system
+          spec:
+            hostNetwork: true
+            containers:
+            - name: kube-scheduler
+              image: gcr.io/google_containers/hyperkube:v1.13.1
+              command:
+              - ./hyperkube
+              - scheduler
+              - --master=https://10.100.130.115:443
+              - --kubeconfig=/etc/kubernetes/ssl/kubeconfig.yaml
+              - --address=0.0.0.0
+              - --leader-elect=true
+              - --v=3
+              livenessProbe:
+                  httpGet:
+                    host: 127.0.0.1
+                    path: /healthz
+                    port: 10251  # Note: Using default port. Update if --port option is set differently.
+                  initialDelaySeconds: 15
+                  timeoutSeconds: 15
+              nodeSelector:
+                node-role.kubernetes.io/master: ""
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 65534
+              volumeMounts:
+              - mountPath: /var/log/kube-scheduler.log
+                name: logfile
+              - mountPath: /etc/kubernetes/ssl
+                name: "kube-ssl"
+                readOnly: true
+            volumes:
+            - hostPath:
+                path: /var/log/kube-scheduler.log
+              name: logfile
+            - hostPath:
+                path: "/etc/kubernetes/ssl"
+              name: "kube-ssl"
+
+
+systemd:
+  units:
+
+    - name: kubelet.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=The primary agent to run pods
+        Documentation=http://kubernetes.io/docs/admin/kubelet/
+        Requires=etcd-member.service
+        After=flanneld.service
+        
+        [Service]
+        Slice=system.slice
+        Environment=RKT_GLOBAL_ARGS="--insecure-options=image"
+        Environment=KUBELET_IMAGE_URL=docker://gcr.io/google_containers/hyperkube
+        Environment=KUBELET_IMAGE_TAG=v1.13.1
+        Environment=#HTTP_PROXY=
+        Environment=#HTTPS_PROXY=
+        #Environment=##http_proxy=
+        #Environment=##https_proxy=
+        Environment=no_proxy=localhost,127.0.0.0/8,127.0.0.1,::1,172.20.0.11,172.20.0.12,172.20.0.13,coreos-1,coreos-2,coreos-3,coreos-1.mkoyan.local,coreos-2.mkoyan.local,coreos-3.mkoyan.local,/var/run/docker.sock
+        ExecStart=/usr/lib/coreos/kubelet-wrapper \
+          --register-node=true \
+          --hostname-override=kube-apiserver \
+          --kubeconfig=/etc/kubernetes/ssl/kubeconfig.yaml \
+          --config=/etc/kubernetes/config.yaml \
+          --network-plugin=cni \
+          --cni-conf-dir=/etc/kubernetes/cni/net.d \
+          --lock-file=/var/run/lock/kubelet.lock \
+          --exit-on-lock-contention \
+          --logtostderr=true \
+          --v=2
+        Restart=always
+        StartLimitInterval=0
+        RestartSec=10
+        
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: settimezone.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Set the time zone
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone Asia/Yerevan
+        RemainAfterExit=yes
+        Type=oneshot
+
+    - name: flanneld.service
+      dropins:
+        - name: 50-network-config.conf
+          contents: |
+            [Service]
+            EnvironmentFile=/etc/flannel/options.env
+            ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan","VNI": 1}}'
+            Restart=always
+
+    - name: flanneld.service
+      dropins:
+        - name: 50-ssl.conf
+          contents: |
+            [Service]
+            Environment="ETCD_SSL_DIR=/var/lib/etcd/ssl"
+
+    # - name: docker-tcp.socket
+    #   enabled: false
+    #   contents: |
+    #     [Unit]
+    #     Description=Docker Socket for the API
+    #     [Socket]
+    #     ListenStream=2375
+    #     BindIPv6Only=both
+    #     Service=docker.service
+    #     [Install]
+    #     WantedBy=sockets.target
+
+
+
+    - name: docker.service
+      enabled: false
+      dropins:
+        - name: 50-insecure-registry.conf
+          contents: |
+            [Service]
+            Environment=DOCKER_OPTS=''
+            #Environment=#HTTP_PROXY=
+            #Environment=#HTTPS_PROXY=
+            #Environment=##http_proxy=
+            #Environment=##https_proxy=
+            #Environment=no_proxy=localhost,127.0.0.0/8,127.0.0.1,::1,10.100.130.115,172.20.0.12,172.20.0.13,coreos-1,coreos-2,coreos-3,coreos-1.mkoyan.local,coreos-2.mkoyan.local,coreos-3.mkoyan.local,/var/run/docker.sock
+
+flannel:
+  version:        0.11.0
+  etcd_prefix:    /coreos.com/network
+  etcd_endpoints: https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379
+  etcd_cafile:    /var/lib/etcd/ssl/ca.pem
+  etcd_certfile:  /var/lib/etcd/ssl/etcd-nodes.pem
+  etcd_keyfile:   /var/lib/etcd/ssl/etcd-nodes-key.pem
+  interface:      ens192
+

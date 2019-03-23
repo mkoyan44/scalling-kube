@@ -1,0 +1,209 @@
+#cloud-config
+
+update:
+  group:  "alpha"
+locksmith:
+  reboot_strategy:  "etcd-lock"
+  etcd_endpoints:   "https://10.100.130.113:2379,https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.114:2379"
+  etcd_cafile:      "/var/lib/etcd/ssl/ca.pem"
+  etcd_certfile:    "/var/lib/etcd/ssl/etcd-nodes.pem"
+  etcd_keyfile:     "/var/lib/etcd/ssl/etcd-nodes-key.pem"
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops"
+
+    - name: mkoyan
+      password_hash: "$6$rounds=4096$J5D/WMPiRMY$Y8SsVHtgfz0nBXY8SrYOqW3qZEVUYF2ZsN5dUYQS0zzx7B/fwHCRdBTqo2Zbn3w7o4vxNs57bMlDQk8JN3A1e/"
+      ssh_authorized_keys:
+        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops"
+      home_dir: /home/mkoyan
+      groups:
+        - sudo
+        - docker
+      shell: /bin/bash
+
+networkd:
+  units:
+    - name: 00-ens192.network
+      contents: |
+        [Match]
+        Name=ens192
+
+        [Network]
+        DNS=10.100.130.1
+        Address=10.100.130.113/24
+        Gateway=10.100.130.1
+storage:
+    - filesystem: "root"
+      path:       "/etc/environment"
+      mode:       0644
+      contents:
+        inline: |
+          COREOS_PRIVATE_IPV4=10.100.130.113
+          COREOS_HOSTNAME=coreos-3
+          ETCDCTL_CACERT=/var/lib/etcd/ssl/ca.pem
+          ETCDCTL_CERT=/var/lib/etcd/ssl/etcd-nodes.pem
+          ETCDCTL_KEY=/var/lib/etcd/ssl/etcd-nodes-key.pem
+          ETCDCTL_API=3 
+          ETCDCTL_ENDPOINTS=https://10.100.130.113:2379,https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.114:2379
+    - filesystem: "root"
+      path:       "/etc/hostname"
+      mode:       0644
+      contents:
+        inline: | 
+          coreos-3.mkoyan.local       
+
+    - filesystem: "root"
+      path:       "/etc/hosts"
+      mode:       0644
+      contents:
+        inline: |
+          127.0.0.1	localhost
+          ::1		localhost
+          10.100.130.113     coreos-3    coreos-3.mkoyan.local
+           
+          10.100.130.111     coreos-1    coreos-1.mkoyan.local
+           
+          10.100.130.112     coreos-2    coreos-2.mkoyan.local
+           
+          10.100.130.114     coreos-4    coreos-4.mkoyan.local
+          
+
+    - filesystem: root
+      path: "/etc/motd"
+      mode: 0644
+      contents:
+        inline: | 
+          Hey Mkoyan!
+    - path: /etc/systemd/timesyncd.conf
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          [Time]
+          NTP=10.100.130.1
+    - path: /var/lib/etcd/ssl/ca.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIDxDCCAqygAwIBAgIUbTpbTo9spKItWzAP2usN2ddzJZ8wDQYJKoZIhvcNAQEL
+          BQAwaDELMAkGA1UEBhMCQU0xEDAOBgNVBAgTB1llcmV2YW4xEDAOBgNVBAcTB1ll
+          cmV2YW4xEzARBgNVBAoTCkt1YmVybmV0ZXMxCzAJBgNVBAsTAkNBMRMwEQYDVQQD
+          EwpLdWJlcm5ldGVzMB4XDTE5MDMyMDEzMzgwMFoXDTI0MDMxODEzMzgwMFowaDEL
+          MAkGA1UEBhMCQU0xEDAOBgNVBAgTB1llcmV2YW4xEDAOBgNVBAcTB1llcmV2YW4x
+          EzARBgNVBAoTCkt1YmVybmV0ZXMxCzAJBgNVBAsTAkNBMRMwEQYDVQQDEwpLdWJl
+          cm5ldGVzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8SrmL6BYGkH0
+          SB7l7iGSFuIKJlEuW07Lg0nK0HOk3dDTKkPXQRvJ7G3LHzzN1by/z9JOjoAS+cL2
+          e+ZM+ttoRZ+hwve1n3Qv6WR2iKlNeoAP4Gzz+sYyvTvf3iosfSo0f7oFesvjUkHx
+          C1m3R4SRMRd9rQe0yytk9FjRF7LaTe1exhtpQmFXc1vOYhRny/Xf0zxgS1MW96Gr
+          7gWRGgoA0qlA10J9jxDcb5DELfbrINddfvGhL8Y3hGVwOjh67eqsx/02NpWgTLfN
+          NUmVeP9Pv9vLFkEx0NBQNoOtYT5PxeVN7Ng6fwURrokvf7h3+PxNo7/FkAhCzChV
+          pGmZvU7DywIDAQABo2YwZDAOBgNVHQ8BAf8EBAMCAQYwEgYDVR0TAQH/BAgwBgEB
+          /wIBAjAdBgNVHQ4EFgQUIWX4/jzE0FeYrHZwkn7bNKIhk4gwHwYDVR0jBBgwFoAU
+          IWX4/jzE0FeYrHZwkn7bNKIhk4gwDQYJKoZIhvcNAQELBQADggEBAIBp0uxM7ID2
+          /v8RyXFF4fJGeLva4rhtd/obuoYMHt/hw3vd+jU0j7eTtsn1EudJIdOA+M4iIsQG
+          PTQ98G10YQ/PTOLS346ifHF+CuMHP7+hX/g7SCNTivqTC3mOc2WpinSsq4y0R2PI
+          Cs5UK5j0XYNfIL6WW5hzLCbFTFuorN4Kvwgk7tKqa0hFSrCtwJQr3gSEsdGmKaOJ
+          qA2UBYB1B9w+505DGl251bcR9LH9T2ZXffheFYfXd8M+y/eRIKkh6wbL2BcFQSaD
+          EkzMkYdgi1u6aR+YdBj+pNeUl3b37ZU9cP82ENSIhPHOB2EKwCBIyB2Vz7JsMtMx
+          olhW8FEusbI=
+          -----END CERTIFICATE-----
+
+
+    - path: /var/lib/etcd/ssl/etcd-nodes.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN CERTIFICATE-----
+          MIIEADCCAuigAwIBAgIUOZzoPtt9+fhWm0cdtgFTyVCgZiQwDQYJKoZIhvcNAQEL
+          BQAwaDELMAkGA1UEBhMCQU0xEDAOBgNVBAgTB1llcmV2YW4xEDAOBgNVBAcTB1ll
+          cmV2YW4xEzARBgNVBAoTCkt1YmVybmV0ZXMxCzAJBgNVBAsTAkNBMRMwEQYDVQQD
+          EwpLdWJlcm5ldGVzMB4XDTE5MDMyMDEzMzgwMFoXDTIwMDMxOTEzMzgwMFowZjEL
+          MAkGA1UEBhMCQU0xEDAOBgNVBAgTB1llcmV2YW4xEDAOBgNVBAcTB1llcmV2YW4x
+          EzARBgNVBAoTCmt1YmVybmV0ZXMxDzANBgNVBAsTBm1rb3lhbjENMAsGA1UEAxME
+          RVRDRDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALLXao+pRvQmNJBX
+          NMWjdseeaZpRZj/f1fzRgTpfX6xQ/mDBlfS88N6IOf3g4oDgEXFMyD+AKIWCvm5g
+          2MN1QlBFfZljfQyCTxhwfHrlzTijzwotRIySZlHyonSVNVLk+OZLOr2NjmzSrwOj
+          MFArg2Qne7uQxl8n7IgOr/Tx6hMZWP+H4g507pItH06u1o+oyfZ3zwpg+kCmWlmp
+          gQ24pCKArGLZqg3gKxYH797/G5HKGIjL6SLVZXJNOa1fbqLKUiZtFost1D58IQVw
+          nUAyOKfzkda714h/NDey5u6fvLLgGdsIerwjg7t7xv7ip+DkSf/LgRWoG8Bsx5tG
+          IDow1wUCAwEAAaOBozCBoDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYB
+          BQUHAwEGCCsGAQUFBwMCMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFAjtYE91ofd/
+          X5g4vgNrFYlGr6GVMB8GA1UdIwQYMBaAFCFl+P48xNBXmKx2cJJ+2zSiIZOIMCEG
+          A1UdEQQaMBiHBApkgm+HBApkgnCHBApkgnGHBH8AAAEwDQYJKoZIhvcNAQELBQAD
+          ggEBABkdPtqdwB1FzIrBP/bMpBKBVqHQNgwP2/gq8blXbDbqW3UTiGTxmSOj7Btz
+          lWyG9t6TY9UcYbyOutSDMl9Ajk6UCJXv0qMC/WKUsYCdMMt6gYqo7QCQZFgbyhQP
+          wAQY9F864KZtyFrX783Su7tsl0kesNrMgX4x8bcoLAtBFjgzg/5SN6oBN2NRTqDe
+          3DZ36yk8lnQ/QovucPH0gvAhHksNPVaE5Kn1zV/r0ekHkLMWfJShXBTMw7PVjsJY
+          mB00PXNXPo1+GITq1r0pRAODfr+IyWfiCRQOsskhMkgaTr8k7uFOabU1e+A7/Cp6
+          c8w74nrdjOOsxiXab99lQT8w/uE=
+          -----END CERTIFICATE-----
+
+    - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEAstdqj6lG9CY0kFc0xaN2x55pmlFmP9/V/NGBOl9frFD+YMGV
+          9Lzw3og5/eDigOARcUzIP4AohYK+bmDYw3VCUEV9mWN9DIJPGHB8euXNOKPPCi1E
+          jJJmUfKidJU1UuT45ks6vY2ObNKvA6MwUCuDZCd7u5DGXyfsiA6v9PHqExlY/4fi
+          DnTuki0fTq7Wj6jJ9nfPCmD6QKZaWamBDbikIoCsYtmqDeArFgfv3v8bkcoYiMvp
+          ItVlck05rV9uospSJm0Wiy3UPnwhBXCdQDI4p/OR1rvXiH80N7Lm7p+8suAZ2wh6
+          vCODu3vG/uKn4ORJ/8uBFagbwGzHm0YgOjDXBQIDAQABAoIBADS+Uy8LPWHD4ryu
+          +2FOVDmK/poEZ6Nu4C0vnG0as5yeRmdCsHb9QgxfILs/F43qhzpi6qvPoCO/62mi
+          Jkt+yY/i7qfOL5MA21LZ2dxk6aFKrkTSFOVgR8zjQgYf+xn3bXB9v1Un6lktyW/J
+          MPZz3swq2NL4X4iwvZFiw4H51o7K7JtPIp6Rvb4909JmiULIcgAC6Nlc7489m0+c
+          J9tmTsxPPQO/f1xyiQbppfLQdQFvECB/r0n7nM1zAD/1HoBlsy1BXxWQRRpmHuVt
+          WER5VPPQplm1dhvJzHXPqrnopNS7rBVc1RZcRzU9hohzSMtWEgkUpngd/Gi6hFg4
+          5O0SsAECgYEA4D+5V6EggiGX1Z7li2q+HDmmdejepiioGcmvyLpv+5LW7tTpyaEe
+          azq4OwNUeGkPp31assZG9mD4FEHrU8MRuIfwwo/Lnw5NQB1cdoEHqI0OpDkrE3Ln
+          FbOOg2Qh1oOJP+A9IN4lwqQUsS6/y4yjLfxX4YeguJid8P6j1JjKPa0CgYEAzCnS
+          znvlAJKMkl9Uy3HSPpRGooE4dkN5cz+PBmyG0/hgt16DVQjqyh2bZ1eOIuwQrC0j
+          3ToUs5wkpZesfwoMr2hiu/Fukd47rr2IUHiTVrZepdlh7xZxcL8beyY1cGRQDyhz
+          ej+rIzDFO+Er9O4fqSnuwUsAwgHITrwI5xnh+bkCgYBhb87coIo7gNU0YMJkfZD1
+          Oqd1fCWiFPBVpCjZEwktSnRRefnLPlK1TOJX4e6GE0BWCkWqgDS9QQ0J4EqcLpo4
+          j/iw0UIsbk5qmVdftljZh9Dg0mZBIR//cfFubce2KZktRAXLjjriA+Fpy2JS01zj
+          0k1tFT1keAvIdxxAd9MIUQKBgF48Z8tbMIalHjFpw0/sh6jO9BOKJa+g0Ww6yB+k
+          9E7e9HVvMJuNdCI6rEJ1DWxdHgz7APTaHDgTOG8epUY2M0i7m+c4N1spAs9TOJo8
+          LXX205Ul06hx6YarD1o2drAb/UAh4btpq+qgVkmfU5TIXODONCAQKJdkDzsYW9uf
+          /MgxAoGBAKPpOGjg+EWmlCj1AwO4sqj7QOJY8MvVwgeyCfg4Lv80DwNYRNaiPIml
+          FkH9fvTnHbcrlQNSnRaPB9PCgUfSj2uS7muZJ+GKeQmB6A8ylA+PMmxpX+EZz04N
+          WOt/eCJAwMZCyFaBaCci5xiM9ezVLUZvhw4KC8mSSaMOpi6PTFx4
+          -----END RSA PRIVATE KEY-----
+
+etcd:
+  # Human-readable name for this member.
+  name:                        "coreos-3"
+  data_dir:                    "/var/lib/etcd"
+  # list of peer memebr with name=schema
+  initial_cluster:              "coreos-3=https://10.100.130.113:2380,coreos-1=https://10.100.130.111:2380,coreos-2=https://10.100.130.112:2380,coreos-4=https://10.100.130.114:2380" 
+  # URLs to advertise to the rest of the cluster
+  initial_advertise_peer_urls:  "https://10.100.130.113:2380"
+  # This flag tells the etcd to accept incoming requests from its peers
+  listen_peer_urls:             "https://10.100.130.113:2380"
+  # accept client incoming connection
+  listen_client_urls:           "https://10.100.130.113:2379"
+  advertise_client_urls:        "https://10.100.130.113:2379"
+  # unique cluster id 
+  initial_cluster_token:        "etcd-cluster-1"
+  # if existing join to cluster with toke of $initial_cluster_token
+  initial_cluster_state:        "new"
+  
+  # enable client cert auth
+  client_cert_auth:             true
+  cert_file:                    "/var/lib/etcd/ssl/etcd-nodes.pem"            
+  key_file:                     "/var/lib/etcd/ssl/etcd-nodes-key.pem"
+  trusted_ca_file:              "/var/lib/etcd/ssl/ca.pem"
+  
+  # enable peer cert auth
+  peer_client_cert_auth:        true      
+  peer_cert_file:               "/var/lib/etcd/ssl/etcd-nodes.pem"
+  peer_key_file:                "/var/lib/etcd/ssl/etcd-nodes-key.pem"
+  peer_trusted_ca_file:         "/var/lib/etcd/ssl/ca.pem"

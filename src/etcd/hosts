@@ -1,0 +1,5 @@
+127.0.0.1	localhost
+::1		localhost
+172.20.0.11 coreos1 coreos1.mkoyan.local
+172.20.0.12 coreos2 coreos2.mkoyan.local
+172.20.0.13 coreos3 coreos3.mkoyan.local

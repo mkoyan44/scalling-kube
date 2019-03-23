@@ -1,0 +1,349 @@
+{
+  "ignition": {
+    "config": {},
+    "security": {
+      "tls": {}
+    },
+    "timeouts": {},
+    "version": "2.2.0"
+  },
+  "networkd": {
+    "units": [
+      {
+        "contents": "[Match]\nName=ens192\n\n[Network]\nDNS=10.100.130.1\nAddress=10.100.130.115/24\nGateway=10.100.130.1\n",
+        "name": "00-ens192.network"
+      }
+    ]
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "core",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops"
+        ]
+      },
+      {
+        "groups": [
+          "sudo",
+          "docker"
+        ],
+        "homeDir": "/home/mkoyan",
+        "name": "mkoyan",
+        "passwordHash": "$6$rounds=4096$J5D/WMPiRMY$Y8SsVHtgfz0nBXY8SrYOqW3qZEVUYF2ZsN5dUYQS0zzx7B/fwHCRdBTqo2Zbn3w7o4vxNs57bMlDQk8JN3A1e/",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops"
+        ],
+        "shell": "/bin/bash"
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "filesystem": "root",
+        "path": "/etc/environment",
+        "contents": {
+          "source": "data:,ADVERTISE_IP%3D10.100.130.115%0ACOREOS_HOSTNAME%3Dkube-apiserver%0A%0AETCDCTL_CA_FILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fca.pem%0AETCDCTL_CERT_FILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes.pem%0AETCDCTL_KEY_FILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes-key.pem%0AETCDCTL_ENDPOINTS%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0A%23%20ETCDCTL_SSL_DIR%3D%2Fvar%2Flib%2Fetcd%2Fssl%0A%0AETCD_ENDPOINTS%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0A%23%20ETCD_SSL_DIR%3D%2Fvar%2Flib%2Fetcd%2Fssl%0A%0AFLANNELD_IFACE%3D10.100.130.115%0AFLANNELD_ETCD_ENDPOINTS%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0AFLANNELD_ETCD_PREFIX%3D%22%2Fcoreos.com%2Fnetwork%22%0A%0ALOCKSMITHCTL_ETCD_CAFILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fca.pem%0ALOCKSMITHCTL_ETCD_CERTFILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes.pem%0ALOCKSMITHCTL_ETCD_KEYFILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes-key.pem%0ALOCKSMITHCTL_ENDPOINT%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/hostname",
+        "contents": {
+          "source": "data:,kube-apiserver.mkoyan.local",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/hosts",
+        "contents": {
+          "source": "data:,127.0.0.1%09localhost%0A%3A%3A1%09%09localhost%0A10.100.130.111%20coreos-1%20coreos-1.mkoyan.local%0A10.100.130.112%20coreos-2%20coreos-2.mkoyan.local%0A10.100.130.113%20coreos-3%20coreos-3.mkoyan.local%0A10.100.130.115%20kube-apiserver%20kube-apiserver.mkoyan.local%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/motd",
+        "contents": {
+          "source": "data:,Hey%20Mkoyan%20axper!%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/systemd/timesyncd.conf",
+        "contents": {
+          "source": "data:,%5BTime%5D%0ANTP%3D10.100.130.1%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/ssl/ca.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIDfzCCAmegAwIBAgIJAIjBdb8zuCZvMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBdMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDEV%0AMBMGA1UEAwwMbWtveWFuLmxvY2FsMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB%0ACgKCAQEAw7WmWvK09wnisgJk7iXpAQxMmaN%2FTmQzx20%2B7VUlHh3eMtuf0dAbWDav%0AN8gtECURNah75Fb4OAesyc2h%2B4TrY%2FPDjNialIR3nTVSFMbyB8TeBGCvnqyDYk5e%0AP7Qr1l58LRN0TxnfeBhP3QFHcAZBj35Y646jvSCeTkcc2VYd%2BKKJsURQenWxM77h%0AfAnqoMFgfJwzBCB0mSDNSooEqXLWNPZT3Fa37%2FxQM%2FV2mRfqHu5M8J6%2BoRrt%2FiGv%0A2Xzzg3st%2FrVawx99Lji25hiKnJeP59s2E9vxdKuL3ra%2FZRaIdSCUBlLM1mEJqtJ6%0Ao1b3SijwfBtDSVRfRLPZWnZmRYf66wIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAQYw%0ADwYDVR0TAQH%2FBAUwAwEB%2FzAdBgNVHQ4EFgQUcPmQa4KCQ46e7YV4F3ne1UaHPeAw%0ADQYJKoZIhvcNAQELBQADggEBAB0yGwbH38Yf1kW2FHWc%2FoEQWTOfbl3yWUJ1LxO8%0ARjPnt%2BDZuLTBlsKB4P1%2FaDXNzwDNxMkDm7yKygp4bgd%2BrVjnP%2BiVw24rl5N2gyPj%0An%2FcuRbhIEnd%2Fa%2F76J79tWL%2Bar%2FW9zqBCBVBHDiE%2BYg6ZmVu1HNHPIcbUjDCwbFBY%0A2nzZw52dheeLiyjF%2Bdf5g0bWOgLAj%2FjtwmhrcA89pJPbilEJoJ2AlQOXga6LPYVH%0AQ6RZdIZQGqsOJRli8tfTAMCeZr%2Fkx%2FccJZ3pMUxQlK9HdhSrzo63Ri1HrK0uopUI%0As2deH14CLHupM%2FaL3BR08oGjXVcDJVoY4rGoFtc86qn1MaY%3D%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/ssl/apiserver.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIFMDCCBBigAwIBAgIJALWF5%2Bt9HxjjMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBbMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDET%0AMBEGA1UEAwwKZXRjZC1ub2RlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC%0AggEBAN9z0u3cYJRsF0uQ71QtD3Op1Ct4QGRTEpM172ZuJKzZGB3SnKmQfqtQFHGZ%0ARcLS2heper85YPt97qOvHCrak5ZQnt91Ad3DVkjZgSa%2Fri6CxEGMWeSaUgKM5QCH%0AxWKjZKX%2FPX2kVYyD0j9o%2FkOAsTRxy9BxxEf5wpDfr%2BZEMZDwC7E3RZ2AdwBo1BmB%0AaZYPSUK80ClduPppEuV7kTndD8JPO3FpfT8HEeOEY4dEV8LcSWRlww3HVup7iAi7%0A4AZDK3ocMsnGmm43r2bJnuAD%2F2%2Fo0r1p4ZCXBdHwKi0gh6YIknNJBWNUZvf6Bcwh%0AGuDNLL3%2BxIw6bMCtU1E7W8w%2F%2BUsCAwEAAaOCAfMwggHvMA4GA1UdDwEB%2FwQEAwIF%0A4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH%2FBAIwADAd%0ABgNVHQ4EFgQUXApMLaiXdkbmaftRE9X5D9Ow1TUwggGPBgNVHREEggGGMIIBgoIM%0AbWtveWFuLmxvY2FsghVjb3Jlb3MtMS5ta295YW4ubG9jYWyCFWNvcmVvcy0yLm1r%0Ab3lhbi5sb2NhbIIVY29yZW9zLTMubWtveWFuLmxvY2Fsgglsb2NhbGhvc3SCCGNv%0AcmVvcy0xgghjb3Jlb3MtMoIIY29yZW9zLTOCDmNvcmVvcy0xLmxvY2Fsgg5jb3Jl%0Ab3MtMi5sb2NhbIIOY29yZW9zLTMubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0%0AZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4Ika3ViZXJuZXRlcy5k%0AZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2Fsgg5rdWJlLWFwaXNlcnZlcoIKa3ViZS1h%0AZG1pbocEfwAAAYcECmSCb4cECmSCcIcECmSCcYcECmSCc4cECmSCdIcECmSCdYcE%0ACmSCdocECgMAAYcECmSCAYcECmSCAocEAAAAAIESYWRtaW5AbWtveWFuLmxvY2Fs%0AMA0GCSqGSIb3DQEBCwUAA4IBAQCbbT8TsSN6gHhZVKdO9IsgvJVCycEP2XhY9RwC%0AvNIEV0ywAJ1nk4EmlHkqmSuWUuNfy3Yrgs%2F6aGAdpVzHIlPfo7OYgNgqCSmqB6l1%0AWH%2BwD9Tbsx3c0he%2FGi9%2Be%2B8t0HqPUmxR06O0RbPjokWuMyPWw1ARUrl3hVMwcPkb%0A%2F0jkIzjbv%2BZp9WaqcvwvD5JxiD4LH45XjgPP6buvB8Iq0bwG8PTPbeonhhL7G9Im%0A6ywEodEcayAJ%2Fk9qWozPDCuOe5B3KgSdL9YgW8Y29nq4gfIFhewVGELX9tj1No%2Bq%0Aw1iH%2F3SwpQk1UJTxEi%2B0eZth2Hcs4jtjQZ0oM6qwbb%2BtB%2BQl%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/ssl/apiserver-key.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20RSA%20PRIVATE%20KEY-----%0AMIIEowIBAAKCAQEA33PS7dxglGwXS5DvVC0Pc6nUK3hAZFMSkzXvZm4krNkYHdKc%0AqZB%2Bq1AUcZlFwtLaF6l6vzlg%2B33uo68cKtqTllCe33UB3cNWSNmBJr%2BuLoLEQYxZ%0A5JpSAozlAIfFYqNkpf89faRVjIPSP2j%2BQ4CxNHHL0HHER%2FnCkN%2Bv5kQxkPALsTdF%0AnYB3AGjUGYFplg9JQrzQKV24%2BmkS5XuROd0Pwk87cWl9PwcR44Rjh0RXwtxJZGXD%0ADcdW6nuICLvgBkMrehwyycaabjevZsme4AP%2Fb%2BjSvWnhkJcF0fAqLSCHpgiSc0kF%0AY1Rm9%2FoFzCEa4M0svf7EjDpswK1TUTtbzD%2F5SwIDAQABAoIBAE7wK%2BO7pqLITLJ1%0AURb7lCnYJQv2P0kxz64Rr7EP2AT37H0cmhuM4DLE53P6IZrhwgn55VMIgipWIqfQ%0AhLLe5KSFdpqaSz58c07pB6cYr%2F%2FeUlaVrmwD2FTuUTgOvrxJ3JSHxsFL%2FKzXJL8h%0A6DEQlYlhag8JIb4LjaCAZTODg78fZPYDrvuK%2B0atRwxN1us1wAkP%2B2XgApFT0XUg%0AKMQEoBJUYhCfIOjkWLOo4XS1Bzb%2FsK7dSvawKWfuAs35DO5V3ZY1eb24AA1MWHsl%0ABeqIn%2FoleagBeZo%2FfEZF3tZgeASKn9uJRhwkgVwn7Ifm8BXCM%2F%2BZImgsxaAMY3Lj%0A3N3sGoECgYEA9axvsOfV1OxragA8r1fYM3CHyUNWLZFJEIU%2B95%2F6rJsdTlj8YZyy%0AoYlUs5TtQDTs3lxPqy4Di7DQPw%2F7m2FNimyNq8IMeFPATaHr4fEAQ4PnqMzHA0mF%0AYIl13crcOoGcsyGgNkVECL%2BEYRGJTcFFnQfTR8QbmuXEyQTGBlzxBHUCgYEA6NhH%0AFVZf5f8E3sIrvxi%2B1W%2Bp65ak6HRgjbAviApBhhsdiDJrf65NWDP0XP%2B22YAPLag4%0AITTqia0dRz81zEI1XVY8cCwnI6MWMK4SRVeW0DyeZtPaOcqYYoV9mnIyc00VT5f4%0AwfczmjA3%2BuPGxefzuibl78OHlFKoz6iNOGaKTr8CgYB9EqXmRZFKjnZ9B9PdXPaX%0A8aFfqKV2G3I8M%2BoDvXGscGfyHEGZHGKg9L6nkplax9cTuaFhv9JUStcqU%2BO%2FjkEg%0AyPUzTV514AWWQGpLpBuDQ%2BMrv91N4h9CL5lPKlkGfDgfxm2%2FU3I4lfA6Tug9Krlb%0AIcHB1qhLKtENmh2K3cRihQKBgFz2BCMzsePMVfBtizOnOIFULH3fTgV0eRv4bHGe%0Azpww9TBsGNkICN8fFv%2BOJD1f0C%2BFSquPSdgfomHQjbT39gBGrqiGKDYlJXXX%2BXlv%0Ax8lpekBJcoXCKeajrwrbbuLzsn9tiCZAgHydpavoBnL68Sav4vs%2FkECaY8VMYN1U%0AqwFXAoGBAIzIx1JyKyXEfQrNQrt8hU7rk8XFBwxG0w88MwUFuYJyFiRvqYX%2B9cV3%0AFyWdj5bQs6OaiziiIN28U2cGUqQ5GOuaybpFBk5%2FOgFxinDU2fcEaBWGxSHZkF0G%0AcwRhdYxrAXJ5CPdcX2TsxqhlQrELxYvNV1d%2BeT%2FmULr2wbHhYIr6%0A-----END%20RSA%20PRIVATE%20KEY-----%0A",
+          "verification": {}
+        },
+        "mode": 384
+      },
+      {
+        "filesystem": "root",
+        "path": "/var/lib/etcd/ssl/ca.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIDfzCCAmegAwIBAgIJAIjBdb8zuCZvMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBdMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDEV%0AMBMGA1UEAwwMbWtveWFuLmxvY2FsMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB%0ACgKCAQEAw7WmWvK09wnisgJk7iXpAQxMmaN%2FTmQzx20%2B7VUlHh3eMtuf0dAbWDav%0AN8gtECURNah75Fb4OAesyc2h%2B4TrY%2FPDjNialIR3nTVSFMbyB8TeBGCvnqyDYk5e%0AP7Qr1l58LRN0TxnfeBhP3QFHcAZBj35Y646jvSCeTkcc2VYd%2BKKJsURQenWxM77h%0AfAnqoMFgfJwzBCB0mSDNSooEqXLWNPZT3Fa37%2FxQM%2FV2mRfqHu5M8J6%2BoRrt%2FiGv%0A2Xzzg3st%2FrVawx99Lji25hiKnJeP59s2E9vxdKuL3ra%2FZRaIdSCUBlLM1mEJqtJ6%0Ao1b3SijwfBtDSVRfRLPZWnZmRYf66wIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAQYw%0ADwYDVR0TAQH%2FBAUwAwEB%2FzAdBgNVHQ4EFgQUcPmQa4KCQ46e7YV4F3ne1UaHPeAw%0ADQYJKoZIhvcNAQELBQADggEBAB0yGwbH38Yf1kW2FHWc%2FoEQWTOfbl3yWUJ1LxO8%0ARjPnt%2BDZuLTBlsKB4P1%2FaDXNzwDNxMkDm7yKygp4bgd%2BrVjnP%2BiVw24rl5N2gyPj%0An%2FcuRbhIEnd%2Fa%2F76J79tWL%2Bar%2FW9zqBCBVBHDiE%2BYg6ZmVu1HNHPIcbUjDCwbFBY%0A2nzZw52dheeLiyjF%2Bdf5g0bWOgLAj%2FjtwmhrcA89pJPbilEJoJ2AlQOXga6LPYVH%0AQ6RZdIZQGqsOJRli8tfTAMCeZr%2Fkx%2FccJZ3pMUxQlK9HdhSrzo63Ri1HrK0uopUI%0As2deH14CLHupM%2FaL3BR08oGjXVcDJVoY4rGoFtc86qn1MaY%3D%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/var/lib/etcd/ssl/etcd-nodes.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIFMDCCBBigAwIBAgIJALWF5%2Bt9HxjjMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBbMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDET%0AMBEGA1UEAwwKZXRjZC1ub2RlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC%0AggEBAN9z0u3cYJRsF0uQ71QtD3Op1Ct4QGRTEpM172ZuJKzZGB3SnKmQfqtQFHGZ%0ARcLS2heper85YPt97qOvHCrak5ZQnt91Ad3DVkjZgSa%2Fri6CxEGMWeSaUgKM5QCH%0AxWKjZKX%2FPX2kVYyD0j9o%2FkOAsTRxy9BxxEf5wpDfr%2BZEMZDwC7E3RZ2AdwBo1BmB%0AaZYPSUK80ClduPppEuV7kTndD8JPO3FpfT8HEeOEY4dEV8LcSWRlww3HVup7iAi7%0A4AZDK3ocMsnGmm43r2bJnuAD%2F2%2Fo0r1p4ZCXBdHwKi0gh6YIknNJBWNUZvf6Bcwh%0AGuDNLL3%2BxIw6bMCtU1E7W8w%2F%2BUsCAwEAAaOCAfMwggHvMA4GA1UdDwEB%2FwQEAwIF%0A4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH%2FBAIwADAd%0ABgNVHQ4EFgQUXApMLaiXdkbmaftRE9X5D9Ow1TUwggGPBgNVHREEggGGMIIBgoIM%0AbWtveWFuLmxvY2FsghVjb3Jlb3MtMS5ta295YW4ubG9jYWyCFWNvcmVvcy0yLm1r%0Ab3lhbi5sb2NhbIIVY29yZW9zLTMubWtveWFuLmxvY2Fsgglsb2NhbGhvc3SCCGNv%0AcmVvcy0xgghjb3Jlb3MtMoIIY29yZW9zLTOCDmNvcmVvcy0xLmxvY2Fsgg5jb3Jl%0Ab3MtMi5sb2NhbIIOY29yZW9zLTMubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0%0AZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4Ika3ViZXJuZXRlcy5k%0AZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2Fsgg5rdWJlLWFwaXNlcnZlcoIKa3ViZS1h%0AZG1pbocEfwAAAYcECmSCb4cECmSCcIcECmSCcYcECmSCc4cECmSCdIcECmSCdYcE%0ACmSCdocECgMAAYcECmSCAYcECmSCAocEAAAAAIESYWRtaW5AbWtveWFuLmxvY2Fs%0AMA0GCSqGSIb3DQEBCwUAA4IBAQCbbT8TsSN6gHhZVKdO9IsgvJVCycEP2XhY9RwC%0AvNIEV0ywAJ1nk4EmlHkqmSuWUuNfy3Yrgs%2F6aGAdpVzHIlPfo7OYgNgqCSmqB6l1%0AWH%2BwD9Tbsx3c0he%2FGi9%2Be%2B8t0HqPUmxR06O0RbPjokWuMyPWw1ARUrl3hVMwcPkb%0A%2F0jkIzjbv%2BZp9WaqcvwvD5JxiD4LH45XjgPP6buvB8Iq0bwG8PTPbeonhhL7G9Im%0A6ywEodEcayAJ%2Fk9qWozPDCuOe5B3KgSdL9YgW8Y29nq4gfIFhewVGELX9tj1No%2Bq%0Aw1iH%2F3SwpQk1UJTxEi%2B0eZth2Hcs4jtjQZ0oM6qwbb%2BtB%2BQl%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/var/lib/etcd/ssl/etcd-nodes-key.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20RSA%20PRIVATE%20KEY-----%0AMIIEowIBAAKCAQEA33PS7dxglGwXS5DvVC0Pc6nUK3hAZFMSkzXvZm4krNkYHdKc%0AqZB%2Bq1AUcZlFwtLaF6l6vzlg%2B33uo68cKtqTllCe33UB3cNWSNmBJr%2BuLoLEQYxZ%0A5JpSAozlAIfFYqNkpf89faRVjIPSP2j%2BQ4CxNHHL0HHER%2FnCkN%2Bv5kQxkPALsTdF%0AnYB3AGjUGYFplg9JQrzQKV24%2BmkS5XuROd0Pwk87cWl9PwcR44Rjh0RXwtxJZGXD%0ADcdW6nuICLvgBkMrehwyycaabjevZsme4AP%2Fb%2BjSvWnhkJcF0fAqLSCHpgiSc0kF%0AY1Rm9%2FoFzCEa4M0svf7EjDpswK1TUTtbzD%2F5SwIDAQABAoIBAE7wK%2BO7pqLITLJ1%0AURb7lCnYJQv2P0kxz64Rr7EP2AT37H0cmhuM4DLE53P6IZrhwgn55VMIgipWIqfQ%0AhLLe5KSFdpqaSz58c07pB6cYr%2F%2FeUlaVrmwD2FTuUTgOvrxJ3JSHxsFL%2FKzXJL8h%0A6DEQlYlhag8JIb4LjaCAZTODg78fZPYDrvuK%2B0atRwxN1us1wAkP%2B2XgApFT0XUg%0AKMQEoBJUYhCfIOjkWLOo4XS1Bzb%2FsK7dSvawKWfuAs35DO5V3ZY1eb24AA1MWHsl%0ABeqIn%2FoleagBeZo%2FfEZF3tZgeASKn9uJRhwkgVwn7Ifm8BXCM%2F%2BZImgsxaAMY3Lj%0A3N3sGoECgYEA9axvsOfV1OxragA8r1fYM3CHyUNWLZFJEIU%2B95%2F6rJsdTlj8YZyy%0AoYlUs5TtQDTs3lxPqy4Di7DQPw%2F7m2FNimyNq8IMeFPATaHr4fEAQ4PnqMzHA0mF%0AYIl13crcOoGcsyGgNkVECL%2BEYRGJTcFFnQfTR8QbmuXEyQTGBlzxBHUCgYEA6NhH%0AFVZf5f8E3sIrvxi%2B1W%2Bp65ak6HRgjbAviApBhhsdiDJrf65NWDP0XP%2B22YAPLag4%0AITTqia0dRz81zEI1XVY8cCwnI6MWMK4SRVeW0DyeZtPaOcqYYoV9mnIyc00VT5f4%0AwfczmjA3%2BuPGxefzuibl78OHlFKoz6iNOGaKTr8CgYB9EqXmRZFKjnZ9B9PdXPaX%0A8aFfqKV2G3I8M%2BoDvXGscGfyHEGZHGKg9L6nkplax9cTuaFhv9JUStcqU%2BO%2FjkEg%0AyPUzTV514AWWQGpLpBuDQ%2BMrv91N4h9CL5lPKlkGfDgfxm2%2FU3I4lfA6Tug9Krlb%0AIcHB1qhLKtENmh2K3cRihQKBgFz2BCMzsePMVfBtizOnOIFULH3fTgV0eRv4bHGe%0Azpww9TBsGNkICN8fFv%2BOJD1f0C%2BFSquPSdgfomHQjbT39gBGrqiGKDYlJXXX%2BXlv%0Ax8lpekBJcoXCKeajrwrbbuLzsn9tiCZAgHydpavoBnL68Sav4vs%2FkECaY8VMYN1U%0AqwFXAoGBAIzIx1JyKyXEfQrNQrt8hU7rk8XFBwxG0w88MwUFuYJyFiRvqYX%2B9cV3%0AFyWdj5bQs6OaiziiIN28U2cGUqQ5GOuaybpFBk5%2FOgFxinDU2fcEaBWGxSHZkF0G%0AcwRhdYxrAXJ5CPdcX2TsxqhlQrELxYvNV1d%2BeT%2FmULr2wbHhYIr6%0A-----END%20RSA%20PRIVATE%20KEY-----%0A",
+          "verification": {}
+        },
+        "mode": 384
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/docker/ca.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIDfzCCAmegAwIBAgIJAIjBdb8zuCZvMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBdMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDEV%0AMBMGA1UEAwwMbWtveWFuLmxvY2FsMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB%0ACgKCAQEAw7WmWvK09wnisgJk7iXpAQxMmaN%2FTmQzx20%2B7VUlHh3eMtuf0dAbWDav%0AN8gtECURNah75Fb4OAesyc2h%2B4TrY%2FPDjNialIR3nTVSFMbyB8TeBGCvnqyDYk5e%0AP7Qr1l58LRN0TxnfeBhP3QFHcAZBj35Y646jvSCeTkcc2VYd%2BKKJsURQenWxM77h%0AfAnqoMFgfJwzBCB0mSDNSooEqXLWNPZT3Fa37%2FxQM%2FV2mRfqHu5M8J6%2BoRrt%2FiGv%0A2Xzzg3st%2FrVawx99Lji25hiKnJeP59s2E9vxdKuL3ra%2FZRaIdSCUBlLM1mEJqtJ6%0Ao1b3SijwfBtDSVRfRLPZWnZmRYf66wIDAQABo0IwQDAOBgNVHQ8BAf8EBAMCAQYw%0ADwYDVR0TAQH%2FBAUwAwEB%2FzAdBgNVHQ4EFgQUcPmQa4KCQ46e7YV4F3ne1UaHPeAw%0ADQYJKoZIhvcNAQELBQADggEBAB0yGwbH38Yf1kW2FHWc%2FoEQWTOfbl3yWUJ1LxO8%0ARjPnt%2BDZuLTBlsKB4P1%2FaDXNzwDNxMkDm7yKygp4bgd%2BrVjnP%2BiVw24rl5N2gyPj%0An%2FcuRbhIEnd%2Fa%2F76J79tWL%2Bar%2FW9zqBCBVBHDiE%2BYg6ZmVu1HNHPIcbUjDCwbFBY%0A2nzZw52dheeLiyjF%2Bdf5g0bWOgLAj%2FjtwmhrcA89pJPbilEJoJ2AlQOXga6LPYVH%0AQ6RZdIZQGqsOJRli8tfTAMCeZr%2Fkx%2FccJZ3pMUxQlK9HdhSrzo63Ri1HrK0uopUI%0As2deH14CLHupM%2FaL3BR08oGjXVcDJVoY4rGoFtc86qn1MaY%3D%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/docker/server.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20CERTIFICATE-----%0AMIIFMDCCBBigAwIBAgIJALWF5%2Bt9HxjjMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV%0ABAYTAkFNMQ8wDQYDVQQIDAZZZXJ2YW4xDzANBgNVBAcMBlllcnZhbjEVMBMGA1UE%0ACgwMbWtveWFuLmxvY2FsMRUwEwYDVQQDDAxta295YW4ubG9jYWwwHhcNMTkwMzE4%0AMTEwMTQzWhcNMjkwMzE1MTEwMTQzWjBbMQswCQYDVQQGEwJBTTEPMA0GA1UECAwG%0AWWVydmFuMQ8wDQYDVQQHDAZZZXJ2YW4xFTATBgNVBAoMDG1rb3lhbi5sb2NhbDET%0AMBEGA1UEAwwKZXRjZC1ub2RlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC%0AggEBAN9z0u3cYJRsF0uQ71QtD3Op1Ct4QGRTEpM172ZuJKzZGB3SnKmQfqtQFHGZ%0ARcLS2heper85YPt97qOvHCrak5ZQnt91Ad3DVkjZgSa%2Fri6CxEGMWeSaUgKM5QCH%0AxWKjZKX%2FPX2kVYyD0j9o%2FkOAsTRxy9BxxEf5wpDfr%2BZEMZDwC7E3RZ2AdwBo1BmB%0AaZYPSUK80ClduPppEuV7kTndD8JPO3FpfT8HEeOEY4dEV8LcSWRlww3HVup7iAi7%0A4AZDK3ocMsnGmm43r2bJnuAD%2F2%2Fo0r1p4ZCXBdHwKi0gh6YIknNJBWNUZvf6Bcwh%0AGuDNLL3%2BxIw6bMCtU1E7W8w%2F%2BUsCAwEAAaOCAfMwggHvMA4GA1UdDwEB%2FwQEAwIF%0A4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH%2FBAIwADAd%0ABgNVHQ4EFgQUXApMLaiXdkbmaftRE9X5D9Ow1TUwggGPBgNVHREEggGGMIIBgoIM%0AbWtveWFuLmxvY2FsghVjb3Jlb3MtMS5ta295YW4ubG9jYWyCFWNvcmVvcy0yLm1r%0Ab3lhbi5sb2NhbIIVY29yZW9zLTMubWtveWFuLmxvY2Fsgglsb2NhbGhvc3SCCGNv%0AcmVvcy0xgghjb3Jlb3MtMoIIY29yZW9zLTOCDmNvcmVvcy0xLmxvY2Fsgg5jb3Jl%0Ab3MtMi5sb2NhbIIOY29yZW9zLTMubG9jYWyCCmt1YmVybmV0ZXOCEmt1YmVybmV0%0AZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZhdWx0LnN2Y4Ika3ViZXJuZXRlcy5k%0AZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2Fsgg5rdWJlLWFwaXNlcnZlcoIKa3ViZS1h%0AZG1pbocEfwAAAYcECmSCb4cECmSCcIcECmSCcYcECmSCc4cECmSCdIcECmSCdYcE%0ACmSCdocECgMAAYcECmSCAYcECmSCAocEAAAAAIESYWRtaW5AbWtveWFuLmxvY2Fs%0AMA0GCSqGSIb3DQEBCwUAA4IBAQCbbT8TsSN6gHhZVKdO9IsgvJVCycEP2XhY9RwC%0AvNIEV0ywAJ1nk4EmlHkqmSuWUuNfy3Yrgs%2F6aGAdpVzHIlPfo7OYgNgqCSmqB6l1%0AWH%2BwD9Tbsx3c0he%2FGi9%2Be%2B8t0HqPUmxR06O0RbPjokWuMyPWw1ARUrl3hVMwcPkb%0A%2F0jkIzjbv%2BZp9WaqcvwvD5JxiD4LH45XjgPP6buvB8Iq0bwG8PTPbeonhhL7G9Im%0A6ywEodEcayAJ%2Fk9qWozPDCuOe5B3KgSdL9YgW8Y29nq4gfIFhewVGELX9tj1No%2Bq%0Aw1iH%2F3SwpQk1UJTxEi%2B0eZth2Hcs4jtjQZ0oM6qwbb%2BtB%2BQl%0A-----END%20CERTIFICATE-----%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/docker/server-key.pem",
+        "contents": {
+          "source": "data:,-----BEGIN%20RSA%20PRIVATE%20KEY-----%0AMIIEowIBAAKCAQEA33PS7dxglGwXS5DvVC0Pc6nUK3hAZFMSkzXvZm4krNkYHdKc%0AqZB%2Bq1AUcZlFwtLaF6l6vzlg%2B33uo68cKtqTllCe33UB3cNWSNmBJr%2BuLoLEQYxZ%0A5JpSAozlAIfFYqNkpf89faRVjIPSP2j%2BQ4CxNHHL0HHER%2FnCkN%2Bv5kQxkPALsTdF%0AnYB3AGjUGYFplg9JQrzQKV24%2BmkS5XuROd0Pwk87cWl9PwcR44Rjh0RXwtxJZGXD%0ADcdW6nuICLvgBkMrehwyycaabjevZsme4AP%2Fb%2BjSvWnhkJcF0fAqLSCHpgiSc0kF%0AY1Rm9%2FoFzCEa4M0svf7EjDpswK1TUTtbzD%2F5SwIDAQABAoIBAE7wK%2BO7pqLITLJ1%0AURb7lCnYJQv2P0kxz64Rr7EP2AT37H0cmhuM4DLE53P6IZrhwgn55VMIgipWIqfQ%0AhLLe5KSFdpqaSz58c07pB6cYr%2F%2FeUlaVrmwD2FTuUTgOvrxJ3JSHxsFL%2FKzXJL8h%0A6DEQlYlhag8JIb4LjaCAZTODg78fZPYDrvuK%2B0atRwxN1us1wAkP%2B2XgApFT0XUg%0AKMQEoBJUYhCfIOjkWLOo4XS1Bzb%2FsK7dSvawKWfuAs35DO5V3ZY1eb24AA1MWHsl%0ABeqIn%2FoleagBeZo%2FfEZF3tZgeASKn9uJRhwkgVwn7Ifm8BXCM%2F%2BZImgsxaAMY3Lj%0A3N3sGoECgYEA9axvsOfV1OxragA8r1fYM3CHyUNWLZFJEIU%2B95%2F6rJsdTlj8YZyy%0AoYlUs5TtQDTs3lxPqy4Di7DQPw%2F7m2FNimyNq8IMeFPATaHr4fEAQ4PnqMzHA0mF%0AYIl13crcOoGcsyGgNkVECL%2BEYRGJTcFFnQfTR8QbmuXEyQTGBlzxBHUCgYEA6NhH%0AFVZf5f8E3sIrvxi%2B1W%2Bp65ak6HRgjbAviApBhhsdiDJrf65NWDP0XP%2B22YAPLag4%0AITTqia0dRz81zEI1XVY8cCwnI6MWMK4SRVeW0DyeZtPaOcqYYoV9mnIyc00VT5f4%0AwfczmjA3%2BuPGxefzuibl78OHlFKoz6iNOGaKTr8CgYB9EqXmRZFKjnZ9B9PdXPaX%0A8aFfqKV2G3I8M%2BoDvXGscGfyHEGZHGKg9L6nkplax9cTuaFhv9JUStcqU%2BO%2FjkEg%0AyPUzTV514AWWQGpLpBuDQ%2BMrv91N4h9CL5lPKlkGfDgfxm2%2FU3I4lfA6Tug9Krlb%0AIcHB1qhLKtENmh2K3cRihQKBgFz2BCMzsePMVfBtizOnOIFULH3fTgV0eRv4bHGe%0Azpww9TBsGNkICN8fFv%2BOJD1f0C%2BFSquPSdgfomHQjbT39gBGrqiGKDYlJXXX%2BXlv%0Ax8lpekBJcoXCKeajrwrbbuLzsn9tiCZAgHydpavoBnL68Sav4vs%2FkECaY8VMYN1U%0AqwFXAoGBAIzIx1JyKyXEfQrNQrt8hU7rk8XFBwxG0w88MwUFuYJyFiRvqYX%2B9cV3%0AFyWdj5bQs6OaiziiIN28U2cGUqQ5GOuaybpFBk5%2FOgFxinDU2fcEaBWGxSHZkF0G%0AcwRhdYxrAXJ5CPdcX2TsxqhlQrELxYvNV1d%2BeT%2FmULr2wbHhYIr6%0A-----END%20RSA%20PRIVATE%20KEY-----%0A",
+          "verification": {}
+        },
+        "mode": 384
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/cni/net.d/10-flannel.conf",
+        "contents": {
+          "source": "data:,%7B%0A%20%20%20%20%22name%22%3A%20%22podnet%22%2C%0A%20%20%20%20%22type%22%3A%20%22flannel%22%2C%0A%20%20%20%20%22delegate%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%22forceAddress%22%3A%20true%2C%0A%20%20%20%20%20%20%20%20%22isDefaultGateway%22%3A%20true%2C%0A%20%20%20%20%20%20%20%20%22hairpinMode%22%3A%20true%0A%20%20%20%20%7D%0A%7D%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/flannel/options.env",
+        "contents": {
+          "source": "data:,%23%20ETCDCTL%20parameters%0AADVERTISE_IP%3D10.100.130.115%0ACOREOS_HOSTNAME%3Dkube-apiserver%0A%0AETCDCTL_CA_FILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fca.pem%0AETCDCTL_CERT_FILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes.pem%0AETCDCTL_KEY_FILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes-key.pem%0AETCDCTL_ENDPOINTS%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0AETCDCTL_SSL_DIR%3D%2Fvar%2Flib%2Fetcd%2Fssl%0A%0AETCD_ENDPOINTS%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0AETCD_SSL_DIR%3D%2Fvar%2Flib%2Fetcd%2Fssl%0A%0AFLANNELD_IFACE%3D10.100.130.115%0AFLANNELD_ETCD_ENDPOINTS%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0AFLANNELD_ETCD_PREFIX%3D%22%2Fcoreos.com%2Fnetwork%22%0A%0ALOCKSMITHCTL_ETCD_CAFILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fca.pem%0ALOCKSMITHCTL_ETCD_CERTFILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes.pem%0ALOCKSMITHCTL_ETCD_KEYFILE%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes-key.pem%0ALOCKSMITHCTL_ENDPOINT%3D%22https%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%22%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf",
+        "contents": {
+          "source": "data:,%5BService%5D%0AExecStartPre%3D%2Fusr%2Fbin%2Fln%20-sf%20%2Fetc%2Fflannel%2Foptions.env%20%2Frun%2Fflannel%2Foptions.env%0AExecStartPre%3D%2Fusr%2Fbin%2Fln%20-sf%20%2Fetc%2Fkubernetes%2Fssl%20%2Fetc%2Fkubernetes%2Fpki%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/cni/docker_opts_cni.env",
+        "contents": {
+          "source": "data:,DOCKER_OPT_BIP%3D%22%22%0ADOCKER_OPT_IPMASQ%3D%22%22%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/systemd/system/docker.service.d/40-flannel.conf",
+        "contents": {
+          "source": "data:,%5BUnit%5D%0ARequires%3Dflanneld.service%0AAfter%3Dflanneld.service%0A%5BService%5D%0AEnvironmentFile%3D%2Fetc%2Fkubernetes%2Fcni%2Fdocker_opts_cni.env%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/kubelet.env",
+        "contents": {
+          "source": "data:,KUBELET_IMAGE_URL%3Dgcr.io%2Fgoogle_containers%2Fhyperkube%0AKUBELET_VERSION%3Dv1.13.1%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/ssl/kubeconfig.yaml",
+        "contents": {
+          "source": "data:,apiVersion%3A%20v1%20%20%0Akind%3A%20Config%0Aclusters%3A%0A-%20name%3A%20local%0A%20%20cluster%3A%0A%20%20%20%20server%3A%20https%3A%2F%2F10.100.130.115%3A443%0A%20%20%20%20certificate-authority%3A%20%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0Ausers%3A%0A-%20name%3A%20kubelet%0A%20%20user%3A%0A%20%20%20%20client-certificate%3A%20%2Fetc%2Fkubernetes%2Fssl%2Fapiserver.pem%0A%20%20%20%20client-key%3A%20%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%0Acontexts%3A%0A-%20context%3A%0A%20%20%20%20cluster%3A%20local%0A%20%20%20%20user%3A%20kubelet%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/ssl/bootstrap-kubeconfig.yaml",
+        "contents": {
+          "source": "data:,apiVersion%3A%20v1%0Akind%3A%20Config%0Aclusters%3A%0A-%20name%3A%20local%0A%20%20cluster%3A%0A%20%20%20%20certificate-authority%3A%20%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0A%20%20%20%20server%3A%20https%3A%2F%2F10.100.130.115%3A443%0Acontexts%3A%0A-%20context%3A%0A%20%20%20%20cluster%3A%20local%0A%20%20%20%20user%3A%20tls-bootstrap-token-user%0A%20%20name%3A%20tls-bootstrap-token-user%40kubernets%0Acurrent-context%3A%20tls-bootstrap-token-user%40kubernets%0Apreferences%3A%20%7B%7D%0Ausers%3A%0A-%20name%3A%20tls-bootstrap-token-user%0A%20%20user%3A%0A%20%20%20%20token%3A%20d6759f25863342e68afb0b2eab2027cd%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/ssl/token-bootstrap-auth.csv",
+        "contents": {
+          "source": "data:,d6759f25863342e68afb0b2eab2027cd%2Ckubelet-bootstrap%2C10001%2C'system%3Anode-bootstrapper'%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/config.yaml",
+        "contents": {
+          "source": "data:,address%3A%200.0.0.0%0AapiVersion%3A%20kubelet.config.k8s.io%2Fv1beta1%0Aauthentication%3A%0A%20%20anonymous%3A%0A%20%20%20%20enabled%3A%20false%0A%20%20webhook%3A%0A%20%20%20%20cacheTTL%3A%202m0s%0A%20%20%20%20enabled%3A%20true%0A%20%20x509%3A%0A%20%20%20%20clientCAFile%3A%20%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0Aauthorization%3A%0A%20%20mode%3A%20Webhook%0A%20%20webhook%3A%0A%20%20%20%20cacheAuthorizedTTL%3A%205m0s%0A%20%20%20%20cacheUnauthorizedTTL%3A%2030s%0AcgroupDriver%3A%20cgroupfs%0AcgroupsPerQOS%3A%20true%0AclusterDNS%3A%0A-%2010.3.0.10%0AclusterDomain%3A%20cluter.local%0AcontainerLogMaxFiles%3A%205%0AcontainerLogMaxSize%3A%2010Mi%0AcontentType%3A%20application%2Fvnd.kubernetes.protobuf%0AcpuCFSQuota%3A%20true%0AcpuManagerPolicy%3A%20none%0AcpuManagerReconcilePeriod%3A%2010s%0AenableControllerAttachDetach%3A%20true%0AenableDebuggingHandlers%3A%20true%0AenforceNodeAllocatable%3A%0A-%20pods%0AeventBurst%3A%2010%0AeventRecordQPS%3A%205%0AevictionHard%3A%0A%20%20imagefs.available%3A%2015%25%0A%20%20memory.available%3A%20100Mi%0A%20%20nodefs.available%3A%2010%25%0A%20%20nodefs.inodesFree%3A%205%25%0AevictionPressureTransitionPeriod%3A%205m0s%0AfailSwapOn%3A%20true%0AfileCheckFrequency%3A%2020s%0AhairpinMode%3A%20promiscuous-bridge%0AhealthzBindAddress%3A%20127.0.0.1%0AhealthzPort%3A%2010248%0AhttpCheckFrequency%3A%2020s%0AimageGCHighThresholdPercent%3A%2085%0AimageGCLowThresholdPercent%3A%2080%0AimageMinimumGCAge%3A%202m0s%0AiptablesDropBit%3A%2015%0AiptablesMasqueradeBit%3A%2014%0Akind%3A%20KubeletConfiguration%0AtlsCertFile%3A%20%22%2Fetc%2Fkubernetes%2Fssl%2Fapiserver.pem%22%0AtlsPrivateKeyFile%3A%20%22%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%22%0ARotateCertificates%3A%20true%0AServerTLSBootstrap%3A%20true%0AkubeAPIBurst%3A%2010%0AkubeAPIQPS%3A%205%0AmakeIPTablesUtilChains%3A%20true%0AmaxOpenFiles%3A%201000000%0AmaxPods%3A%20110%0AnodeStatusUpdateFrequency%3A%2010s%0AoomScoreAdj%3A%20-999%0ApodPidsLimit%3A%20-1%0Aport%3A%2010250%0AregistryBurst%3A%2010%0AregistryPullQPS%3A%205%0AresolvConf%3A%20%2Fetc%2Fresolv.conf%0ArotateCertificates%3A%20true%0AruntimeRequestTimeout%3A%202m0s%0AserializeImagePulls%3A%20true%0AstaticPodPath%3A%20%2Fetc%2Fkubernetes%2Fmanifests%0AstreamingConnectionIdleTimeout%3A%204h0m0s%0AsyncFrequency%3A%201m0s%0AvolumeStatsAggPeriod%3A%201m0s%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/manifests/kube-apiserver.yaml",
+        "contents": {
+          "source": "data:,apiVersion%3A%20v1%0Akind%3A%20Pod%0Ametadata%3A%0A%20%20name%3A%20kube-apiserver%0A%20%20namespace%3A%20kube-system%0Aspec%3A%0A%20%20hostNetwork%3A%20true%0A%20%20containers%3A%0A%20%20-%20name%3A%20kube-apiserver%0A%20%20%20%20image%3A%20gcr.io%2Fgoogle_containers%2Fhyperkube%3Av1.13.1%0A%20%20%20%20command%3A%0A%20%20%20%20-%20%2Fhyperkube%0A%20%20%20%20-%20apiserver%0A%20%20%20%20-%20--bind-address%3D0.0.0.0%0A%20%20%20%20-%20--etcd-servers%3Dhttps%3A%2F%2F10.100.130.111%3A2379%2Chttps%3A%2F%2F10.100.130.112%3A2379%2Chttps%3A%2F%2F10.100.130.113%3A2379%0A%20%20%20%20-%20--allow-privileged%3Dtrue%0A%20%20%20%20-%20--service-cluster-ip-range%3D10.3.0.0%2F21%0A%20%20%20%20-%20--secure-port%3D443%0A%20%20%20%20-%20--advertise-address%3D10.100.130.115%0A%20%20%20%20-%20--storage-backend%3Detcd3%0A%20%20%20%20-%20--storage-media-type%3Dapplication%2Fjson%0A%20%20%20%20-%20--admission-control%3DNamespaceLifecycle%2CLimitRanger%2CServiceAccount%2CResourceQuota%2CDefaultStorageClass%2CPersistentVolumeLabel%0A%20%20%20%20%23-%20--admission-control%3DInitializers%2CNamespaceLifecycle%2CLimitRanger%2CServiceAccount%2CPersistentVolumeLabel%2CDefaultStorageClass%2CDefaultTolerationSeconds%2CNodeRestriction%2CResourceQuotaInitializers%2CNamespaceLifecycle%2CLimitRanger%2CServiceAccount%2CPersistentVolumeLabel%2CDefaultStorageClass%2CDefaultTolerationSeconds%2CNodeRestriction%2CResourceQuota%0A%20%20%20%20-%20--etcd-certfile%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes.pem%0A%20%20%20%20-%20--etcd-keyfile%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fetcd-nodes-key.pem%0A%20%20%20%20-%20--etcd-cafile%3D%2Fvar%2Flib%2Fetcd%2Fssl%2Fca.pem%0A%20%20%20%20-%20--tls-cert-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver.pem%0A%20%20%20%20-%20--tls-private-key-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%0A%20%20%20%20-%20--kubelet-certificate-authority%3D%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0A%20%20%20%20-%20--kubelet-client-certificate%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver.pem%0A%20%20%20%20-%20--kubelet-client-key%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%0A%20%20%20%20-%20--service-account-key-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%0A%20%20%20%20-%20--client-ca-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0A%20%20%20%20-%20--runtime-config%3Dextensions%2Fv1beta1%2Fnetworkpolicies%3Dtrue%2Cextensions%2Fv1beta1%3Dtrue%2Crbac.authorization.k8s.io%2Fv1%0A%20%20%20%20-%20--authorization-mode%3DNode%2CRBAC%0A%20%20%20%20-%20--token-auth-file%3D%2Fetc%2Fkubernetes%2Fssl%2Ftoken-bootstrap-auth.csv%0A%20%20%20%20-%20--anonymous-auth%3Dfalse%0A%20%20%20%20-%20--audit-log-path%3D%2Fvar%2Flog%2Fkubernetes%2Fkube-apiserver-audit.log%0A%20%20%20%20-%20--audit-log-maxage%3D30%0A%20%20%20%20-%20--audit-log-maxbackup%3D3%0A%20%20%20%20-%20--audit-log-maxsize%3D100%0A%20%20%20%20-%20--v%3D3%0A%20%20%20%20livenessProbe%3A%0A%20%20%20%20%20%20httpGet%3A%0A%20%20%20%20%20%20%20%20host%3A%20127.0.0.1%0A%20%20%20%20%20%20%20%20port%3A%208080%0A%20%20%20%20%20%20%20%20path%3A%20%2Fhealthz%0A%20%20%20%20%20%20initialDelaySeconds%3A%2015%0A%20%20%20%20%20%20timeoutSeconds%3A%2015%0A%20%20%20%20ports%3A%0A%20%20%20%20-%20containerPort%3A%20443%0A%20%20%20%20%20%20hostPort%3A%20443%0A%20%20%20%20%20%20name%3A%20https%0A%20%20%20%20-%20containerPort%3A%208080%0A%20%20%20%20%20%20hostPort%3A%208080%0A%20%20%20%20%20%20name%3A%20local%0A%20%20%20%20volumeMounts%3A%0A%20%20%20%20-%20mountPath%3A%20%2Fetc%2Fkubernetes%2Fssl%0A%20%20%20%20%20%20name%3A%20ssl-certs-kubernetes%0A%20%20%20%20%20%20readOnly%3A%20true%0A%20%20%20%20-%20mountPath%3A%20%2Fvar%2Flib%2Fetcd%2Fssl%0A%20%20%20%20%20%20name%3A%20ssl-certs-etcd%0A%20%20%20%20%20%20readOnly%3A%20true%0A%20%20%20%20-%20mountPath%3A%20%2Fetc%2Fssl%2Fcerts%0A%20%20%20%20%20%20name%3A%20ssl-certs-host%0A%20%20%20%20%20%20readOnly%3A%20true%0A%20%20%20%20-%20mountPath%3A%20%2Fvar%2Flog%2Fkubernetes%0A%20%20%20%20%20%20name%3A%20var-log-kubernetes%0A%20%20%20%20%20%20readOnly%3A%20false%0A%20%20volumes%3A%0A%20%20-%20hostPath%3A%0A%20%20%20%20%20%20path%3A%20%2Fetc%2Fkubernetes%2Fssl%0A%20%20%20%20name%3A%20ssl-certs-kubernetes%0A%20%20-%20hostPath%3A%0A%20%20%20%20%20%20path%3A%20%2Fvar%2Flib%2Fetcd%2Fssl%0A%20%20%20%20name%3A%20ssl-certs-etcd%0A%20%20-%20hostPath%3A%0A%20%20%20%20%20%20path%3A%20%2Fusr%2Fshare%2Fca-certificates%0A%20%20%20%20name%3A%20ssl-certs-host%0A%20%20-%20hostPath%3A%0A%20%20%20%20%20%20path%3A%20%2Fvar%2Flog%2Fkubernetes%0A%20%20%20%20name%3A%20var-log-kubernetes%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/manifests/kube-controller-manager.yaml",
+        "contents": {
+          "source": "data:,apiVersion%3A%20v1%0Akind%3A%20Pod%0Ametadata%3A%0A%20%20name%3A%20kube-controller-manager%0A%20%20namespace%3A%20kube-system%0Aspec%3A%0A%20%20%20%20%20%20hostNetwork%3A%20true%0A%20%20%20%20%20%20containers%3A%0A%20%20%20%20%20%20-%20name%3A%20kube-controller-manager%0A%20%20%20%20%20%20%20%20image%3A%20gcr.io%2Fgoogle_containers%2Fhyperkube%3Av1.13.1%0A%20%20%20%20%20%20%20%20command%3A%0A%20%20%20%20%20%20%20%20-%20.%2Fhyperkube%0A%20%20%20%20%20%20%20%20-%20controller-manager%0A%20%20%20%20%20%20%20%20-%20--master%3Dhttps%3A%2F%2F10.100.130.115%3A443%0A%20%20%20%20%20%20%20%20-%20--kubeconfig%3D%2Fetc%2Fkubernetes%2Fssl%2Fkubeconfig.yaml%0A%20%20%20%20%20%20%20%20-%20--authentication-kubeconfig%3D%2Fetc%2Fkubernetes%2Fssl%2Fkubeconfig.yaml%0A%20%20%20%20%20%20%20%20-%20--authorization-kubeconfig%3D%2Fetc%2Fkubernetes%2Fssl%2Fkubeconfig.yaml%0A%20%20%20%20%20%20%20%20-%20--client-ca-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0A%20%20%20%20%20%20%20%20-%20--leader-elect%3Dtrue%0A%20%20%20%20%20%20%20%20-%20--allocate-node-cidrs%3Dtrue%0A%20%20%20%20%20%20%20%20-%20--cluster-cidr%3D10.244.0.0%2F16%0A%20%20%20%20%20%20%20%20-%20--service-cluster-ip-range%3D10.3.0.0%2F21%0A%20%20%20%20%20%20%20%20-%20--root-ca-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0A%20%20%20%20%20%20%20%20-%20--tls-cert-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fca.pem%0A%20%20%20%20%20%20%20%20-%20--tls-private-key-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%0A%20%20%20%20%20%20%20%20-%20--cluster-signing-cert-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver.pem%0A%20%20%20%20%20%20%20%20-%20--cluster-signing-key-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%0A%20%20%20%20%20%20%20%20-%20--service-account-private-key-file%3D%2Fetc%2Fkubernetes%2Fssl%2Fapiserver-key.pem%0A%20%20%20%20%20%20%20%20-%20--use-service-account-credentials%3Dtrue%0A%20%20%20%20%20%20%20%20-%20--experimental-cluster-signing-duration%3D87600h0m0s%0A%20%20%20%20%20%20%20%20livenessProbe%3A%0A%20%20%20%20%20%20%20%20%20%20httpGet%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20host%3A%20127.0.0.1%0A%20%20%20%20%20%20%20%20%20%20%20%20path%3A%20%2Fhealthz%0A%20%20%20%20%20%20%20%20%20%20%20%20port%3A%2010252%20%20%23%20Note%3A%20Using%20default%20port.%20Update%20if%20--port%20option%20is%20set%20differently.%0A%20%20%20%20%20%20%20%20%20%20initialDelaySeconds%3A%2015%0A%20%20%20%20%20%20%20%20%20%20timeoutSeconds%3A%205%0A%20%20%20%20%20%20%20%20volumeMounts%3A%0A%20%20%20%20%20%20%20%20-%20mountPath%3A%20%2Fetc%2Fssl%2Fcerts%0A%20%20%20%20%20%20%20%20%20%20name%3A%20ssl-host%0A%20%20%20%20%20%20%20%20%20%20readOnly%3A%20true%0A%20%20%20%20%20%20%20%20-%20mountPath%3A%20%2Fvar%2Flog%2Fkube-controller-manager.log%0A%20%20%20%20%20%20%20%20%20%20name%3A%20logfile%0A%20%20%20%20%20%20%20%20%20%20readOnly%3A%20false%0A%20%20%20%20%20%20%20%20-%20mountPath%3A%20%2Fetc%2Fkubernetes%2Fssl%0A%20%20%20%20%20%20%20%20%20%20name%3A%20kube-ssl%0A%20%20%20%20%20%20%20%20%20%20readOnly%3A%20true%0A%20%20%20%20%20%20volumes%3A%0A%20%20%20%20%20%20-%20hostPath%3A%0A%20%20%20%20%20%20%20%20%20%20path%3A%20%2Fusr%2Fshare%2Fca-certificates%0A%20%20%20%20%20%20%20%20name%3A%20ssl-host%0A%20%20%20%20%20%20-%20hostPath%3A%0A%20%20%20%20%20%20%20%20%20%20path%3A%20%2Fvar%2Flog%2Fkube-controller-manager.log%0A%20%20%20%20%20%20%20%20name%3A%20logfile%0A%20%20%20%20%20%20-%20hostPath%3A%0A%20%20%20%20%20%20%20%20%20%20path%3A%20%2Fetc%2Fkubernetes%2Fssl%0A%20%20%20%20%20%20%20%20name%3A%20kube-ssl%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/manifests/kube-proxy.yaml",
+        "contents": {
+          "source": "data:,apiVersion%3A%20v1%0Akind%3A%20Pod%0Ametadata%3A%0A%20%20name%3A%20kube-proxy%0A%20%20namespace%3A%20kube-system%0A%20%20labels%3A%0A%20%20%20%20tier%3A%20node%0A%20%20%20%20k8s-app%3A%20kube-proxy%0Aspec%3A%0A%20%20%20%20%20%20hostNetwork%3A%20true%0A%20%20%20%20%20%20containers%3A%0A%20%20%20%20%20%20-%20name%3A%20kube-proxy%0A%20%20%20%20%20%20%20%20image%3A%20gcr.io%2Fgoogle_containers%2Fhyperkube%3Av1.13.1%0A%20%20%20%20%20%20%20%20command%3A%0A%20%20%20%20%20%20%20%20-%20.%2Fhyperkube%0A%20%20%20%20%20%20%20%20-%20proxy%0A%20%20%20%20%20%20%20%20-%20--master%3Dhttps%3A%2F%2F10.100.130.115%3A443%0A%20%20%20%20%20%20%20%20-%20--kubeconfig%3D%2Fetc%2Fkubernetes%2Fssl%2Fkubeconfig.yaml%0A%20%20%20%20%20%20%20%20-%20--logtostderr%3Dtrue%0A%20%20%20%20%20%20%20%20-%20--proxy-mode%3Diptables%0A%20%20%20%20%20%20%20%20-%20--masquerade-all%0A%20%20%20%20%20%20%20%20-%20--hostname-override%3D10.100.130.115%0A%20%20%20%20%20%20%20%20-%20--cluster-cidr%3D10.244.0.0%2F16%0A%20%20%20%20%20%20%20%20-%20--v%3D3%0A%20%20%20%20%20%20%20%20env%3A%0A%20%20%20%20%20%20%20%20%20%20-%20name%3A%20NODE_NAME%0A%20%20%20%20%20%20%20%20%20%20%20%20valueFrom%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20fieldRef%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fieldPath%3A%20spec.nodeName%0A%20%20%20%20%20%20%20%20securityContext%3A%0A%20%20%20%20%20%20%20%20%20%20privileged%3A%20true%0A%20%20%20%20%20%20%20%20volumeMounts%3A%0A%20%20%20%20%20%20%20%20-%20mountPath%3A%20%2Fetc%2Fssl%2Fcerts%0A%20%20%20%20%20%20%20%20%20%20name%3A%20ssl-certs-host%0A%20%20%20%20%20%20%20%20%20%20readOnly%3A%20true%0A%20%20%20%20%20%20%20%20-%20name%3A%20kube-ssl%0A%20%20%20%20%20%20%20%20%20%20mountPath%3A%20%2Fetc%2Fkubernetes%2Fssl%0A%20%20%20%20%20%20%20%20%20%20readOnly%3A%20true%0A%20%20%20%20%20%20tolerations%3A%0A%20%20%20%20%20%20-%20key%3A%20%22node-role.kubernetes.io%2Fmaster%22%0A%20%20%20%20%20%20%20%20operator%3A%20%22Exists%22%0A%20%20%20%20%20%20%20%20effect%3A%20%22NoSchedule%22%0A%20%20%20%20%20%20volumes%3A%0A%20%20%20%20%20%20-%20hostPath%3A%0A%20%20%20%20%20%20%20%20%20%20path%3A%20%2Fusr%2Fshare%2Fca-certificates%0A%20%20%20%20%20%20%20%20name%3A%20ssl-certs-host%0A%20%20%20%20%20%20-%20name%3A%20kube-ssl%0A%20%20%20%20%20%20%20%20hostPath%3A%0A%20%20%20%20%20%20%20%20%20%20path%3A%20%2Fetc%2Fkubernetes%2Fssl%0A",
+          "verification": {}
+        },
+        "mode": 420
+      },
+      {
+        "filesystem": "root",
+        "path": "/etc/kubernetes/manifests/kube-scheduler.yaml",
+        "contents": {
+          "source": "data:,apiVersion%3A%20v1%0Akind%3A%20Pod%0Ametadata%3A%0A%20%20name%3A%20kube-scheduler%0A%20%20namespace%3A%20kube-system%0Aspec%3A%0A%20%20hostNetwork%3A%20true%0A%20%20containers%3A%0A%20%20-%20name%3A%20kube-scheduler%0A%20%20%20%20image%3A%20gcr.io%2Fgoogle_containers%2Fhyperkube%3Av1.13.1%0A%20%20%20%20command%3A%0A%20%20%20%20-%20.%2Fhyperkube%0A%20%20%20%20-%20scheduler%0A%20%20%20%20-%20--master%3Dhttps%3A%2F%2F10.100.130.115%3A443%0A%20%20%20%20-%20--kubeconfig%3D%2Fetc%2Fkubernetes%2Fssl%2Fkubeconfig.yaml%0A%20%20%20%20-%20--address%3D0.0.0.0%0A%20%20%20%20-%20--leader-elect%3Dtrue%0A%20%20%20%20-%20--v%3D3%0A%20%20%20%20livenessProbe%3A%0A%20%20%20%20%20%20%20%20httpGet%3A%0A%20%20%20%20%20%20%20%20%20%20host%3A%20127.0.0.1%0A%20%20%20%20%20%20%20%20%20%20path%3A%20%2Fhealthz%0A%20%20%20%20%20%20%20%20%20%20port%3A%2010251%20%20%23%20Note%3A%20Using%20default%20port.%20Update%20if%20--port%20option%20is%20set%20differently.%0A%20%20%20%20%20%20%20%20initialDelaySeconds%3A%2015%0A%20%20%20%20%20%20%20%20timeoutSeconds%3A%2015%0A%20%20%20%20nodeSelector%3A%0A%20%20%20%20%20%20node-role.kubernetes.io%2Fmaster%3A%20%22%22%0A%20%20%20%20securityContext%3A%0A%20%20%20%20%20%20runAsNonRoot%3A%20true%0A%20%20%20%20%20%20runAsUser%3A%2065534%0A%20%20%20%20volumeMounts%3A%0A%20%20%20%20-%20mountPath%3A%20%2Fvar%2Flog%2Fkube-scheduler.log%0A%20%20%20%20%20%20name%3A%20logfile%0A%20%20%20%20-%20mountPath%3A%20%2Fetc%2Fkubernetes%2Fssl%0A%20%20%20%20%20%20name%3A%20%22kube-ssl%22%0A%20%20%20%20%20%20readOnly%3A%20true%0A%20%20volumes%3A%0A%20%20-%20hostPath%3A%0A%20%20%20%20%20%20path%3A%20%2Fvar%2Flog%2Fkube-scheduler.log%0A%20%20%20%20name%3A%20logfile%0A%20%20-%20hostPath%3A%0A%20%20%20%20%20%20path%3A%20%22%2Fetc%2Fkubernetes%2Fssl%22%0A%20%20%20%20name%3A%20%22kube-ssl%22%0A",
+          "verification": {}
+        },
+        "mode": 420
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "dropins": [
+          {
+            "contents": "[Service]\nEnvironment=\"FLANNEL_IMAGE_TAG=v0.11.0\"\nExecStart=\nExecStart=/usr/lib/coreos/flannel-wrapper $FLANNEL_OPTS \\\n  --etcd-endpoints=\"https://10.100.130.111:2379,https://10.100.130.112:2379,https://10.100.130.113:2379\" \\\n  --etcd-cafile=\"/var/lib/etcd/ssl/ca.pem\" \\\n  --etcd-certfile=\"/var/lib/etcd/ssl/etcd-nodes.pem\" \\\n  --etcd-keyfile=\"/var/lib/etcd/ssl/etcd-nodes-key.pem\" \\\n  --etcd-prefix=\"/coreos.com/network\" \\\n  --iface=\"ens192\"",
+            "name": "20-clct-flannel.conf"
+          }
+        ],
+        "enable": true,
+        "name": "flanneld.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=The primary agent to run pods\nDocumentation=http://kubernetes.io/docs/admin/kubelet/\nRequires=etcd-member.service\nAfter=flanneld.service\n\n[Service]\nSlice=system.slice\nEnvironment=RKT_GLOBAL_ARGS=\"--insecure-options=image\"\nEnvironment=KUBELET_IMAGE_URL=docker://gcr.io/google_containers/hyperkube\nEnvironment=KUBELET_IMAGE_TAG=v1.13.1\nEnvironment=#HTTP_PROXY=\nEnvironment=#HTTPS_PROXY=\n#Environment=##http_proxy=\n#Environment=##https_proxy=\nEnvironment=no_proxy=localhost,127.0.0.0/8,127.0.0.1,::1,172.20.0.11,172.20.0.12,172.20.0.13,coreos-1,coreos-2,coreos-3,coreos-1.mkoyan.local,coreos-2.mkoyan.local,coreos-3.mkoyan.local,/var/run/docker.sock\nExecStart=/usr/lib/coreos/kubelet-wrapper \\\n  --register-node=true \\\n  --hostname-override=kube-apiserver \\\n  --kubeconfig=/etc/kubernetes/ssl/kubeconfig.yaml \\\n  --config=/etc/kubernetes/config.yaml \\\n  --network-plugin=cni \\\n  --cni-conf-dir=/etc/kubernetes/cni/net.d \\\n  --lock-file=/var/run/lock/kubelet.lock \\\n  --exit-on-lock-contention \\\n  --logtostderr=true \\\n  --v=2\nRestart=always\nStartLimitInterval=0\nRestartSec=10\n\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "kubelet.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Set the time zone\n[Service]\nExecStart=/usr/bin/timedatectl set-timezone Asia/Yerevan\nRemainAfterExit=yes\nType=oneshot\n",
+        "enabled": true,
+        "name": "settimezone.service"
+      },
+      {
+        "dropins": [
+          {
+            "contents": "[Service]\nEnvironmentFile=/etc/flannel/options.env\nExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{\"Network\":\"10.244.0.0/16\", \"Backend\": {\"Type\": \"vxlan\",\"VNI\": 1}}'\nRestart=always\n",
+            "name": "50-network-config.conf"
+          }
+        ],
+        "name": "flanneld.service"
+      },
+      {
+        "dropins": [
+          {
+            "contents": "[Service]\nEnvironment=\"ETCD_SSL_DIR=/var/lib/etcd/ssl\"\n",
+            "name": "50-ssl.conf"
+          }
+        ],
+        "name": "flanneld.service"
+      },
+      {
+        "dropins": [
+          {
+            "contents": "[Service]\nEnvironment=DOCKER_OPTS=''\n#Environment=#HTTP_PROXY=\n#Environment=#HTTPS_PROXY=\n#Environment=##http_proxy=\n#Environment=##https_proxy=\n#Environment=no_proxy=localhost,127.0.0.0/8,127.0.0.1,::1,10.100.130.115,172.20.0.12,172.20.0.13,coreos-1,coreos-2,coreos-3,coreos-1.mkoyan.local,coreos-2.mkoyan.local,coreos-3.mkoyan.local,/var/run/docker.sock\n",
+            "name": "50-insecure-registry.conf"
+          }
+        ],
+        "enabled": false,
+        "name": "docker.service"
+      }
+    ]
+  }
+}
