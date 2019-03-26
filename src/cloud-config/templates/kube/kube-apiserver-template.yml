@@ -37,6 +37,7 @@ networkd:
         Address={{ internal_IP }}/24
         Gateway=10.100.130.1
 storage:
+  files:
     - path:       /etc/environment
       filesystem: root
       mode:       0644
@@ -73,11 +74,9 @@ storage:
         inline: |
           127.0.0.1	localhost
           ::1		localhost
-          {{internal_IP}}     {{hostname}}    {{hostname}}.mkoyan.local
-          {%for peer in peers%} 
+          {%for peer in _hosts_list%}
           {{peer[1]}}     {{peer[0]}}    {{peer[0]}}.mkoyan.local
           {%endfor%}
-
           
     - path:       /etc/motd
       filesystem: root

@@ -37,70 +37,70 @@ networkd:
         Address={{ internal_IP }}/24
         Gateway=10.100.130.1
 storage:
-    - filesystem: "root"
-      path:       "/etc/environment"
-      mode:       0644
-      contents:
-        inline: |
-          COREOS_PRIVATE_IPV4={{ internal_IP }}
-          COREOS_HOSTNAME={{ hostname }}
-          ETCDCTL_CACERT=/var/lib/etcd/ssl/ca.pem
-          ETCDCTL_CERT=/var/lib/etcd/ssl/etcd-nodes.pem
-          ETCDCTL_KEY=/var/lib/etcd/ssl/etcd-nodes-key.pem
-          ETCDCTL_API=3 
-          ETCDCTL_ENDPOINTS={{ etcd_endpoints }}
-    - filesystem: "root"
-      path:       "/etc/hostname"
-      mode:       0644
-      contents:
-        inline: | 
-          {{ hostname }}.mkoyan.local       
+  files:
+  - filesystem: root
+    path:       /etc/environment
+    mode:       0644
+    contents:
+      inline: |
+        COREOS_PRIVATE_IPV4={{ internal_IP }}
+        COREOS_HOSTNAME={{ hostname }}
+        ETCDCTL_CACERT=/var/lib/etcd/ssl/ca.pem
+        ETCDCTL_CERT=/var/lib/etcd/ssl/etcd-nodes.pem
+        ETCDCTL_KEY=/var/lib/etcd/ssl/etcd-nodes-key.pem
+        ETCDCTL_API=3
+        ETCDCTL_ENDPOINTS={{ etcd_endpoints }}
+  - filesystem: "root"
+    path:       "/etc/hostname"
+    mode:       0644
+    contents:
+      inline: |
+        {{ hostname }}.mkoyan.local
 
-    - filesystem: "root"
-      path:       "/etc/hosts"
-      mode:       0644
-      contents:
-        inline: |
-          127.0.0.1	localhost
-          ::1		localhost
-          {{internal_IP}}     {{hostname}}    {{hostname}}.mkoyan.local
-          {%for peer in peers%} 
-          {{peer[1]}}     {{peer[0]}}    {{peer[0]}}.mkoyan.local
-          {%endfor%}
+  - filesystem: "root"
+    path:       "/etc/hosts"
+    mode:       0644
+    contents:
+      inline: |
+        127.0.0.1	localhost
+        ::1		localhost
+        {%for peer in _hosts_list%}
+        {{peer[1]}}     {{peer[0]}}    {{peer[0]}}.mkoyan.local
+        {%endfor%}
 
 
-    - filesystem: root
-      path: "/etc/motd"
-      mode: 0644
-      contents:
-        inline: | 
-          Hey Mkoyan!
-    - path: /etc/systemd/timesyncd.conf
-      filesystem: root
-      mode: 0644
-      contents:
-        inline: |
-          [Time]
-          NTP=10.100.130.1
-    - path: /var/lib/etcd/ssl/ca.pem
-      filesystem: root
-      mode: 0644
-      contents:
-        inline: |
-          {{ca}}
+  - filesystem: root
+    path: "/etc/motd"
+    mode: 0644
+    contents:
+      inline: |
+        Hey Mkoyan!
+  - path: /etc/systemd/timesyncd.conf
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        [Time]
+        NTP=10.100.130.1
+  - path: /var/lib/etcd/ssl/ca.pem
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        {{ca}}
 
-    - path: /var/lib/etcd/ssl/etcd-nodes.pem
-      filesystem: root
-      mode: 0644
-      contents:
-        inline: |
-          {{etcd_nodes}}
-    - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
-      filesystem: root
-      mode: 0644
-      contents:
-        inline: |
-          {{etcd_nodes_key}}
+  - path: /var/lib/etcd/ssl/etcd-nodes.pem
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        {{etcd_nodes}}
+  - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        {{etcd_nodes_key}}
 etcd:
   # Human-readable name for this member.
   name:                        "{{ hostname }}"

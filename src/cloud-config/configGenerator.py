@@ -1,78 +1,109 @@
-import os
-from jinja2 import Environment, PackageLoader,FileSystemLoader
-from yaml import load,Loader
-
-# Capture our current directory
-cwd = os.path.dirname(os.path.abspath(__file__))
+from shutil import rmtree
+from subprocess import Popen
+try:
+    from subprocess import DEVNULL
+except ImportError:
+    import os
+    DEVNULL = open(os.devnull, 'wb')
 
 def get_certificate(name):
-    pem_file = os.path.join(os.pardir,"cfssl/keys/{name}".format(name=name))
+    pem_file = "keys/{name}".format(name=name)
     with open(pem_file,'r') as f:
         list_ = f.read().splitlines()
         return "          ".join(
                             [str(x.strip()) + '\n' for x in list_],
                         )
 
-def run_render():
-    with open(os.path.join(cwd,'config.yml'),'r') as f: config = load(f, Loader=Loader)    
-    j2_env = Environment(loader=FileSystemLoader(os.path.join(cwd,"templates/keys")),trim_blocks=True)
-    for hostname in config['etcd'].keys():
-        etcd_internal_ip=config['etcd'][hostname]["ip"]
-        etcd_endpoints       = 'https://{}:2379'.format(etcd_internal_ip)
-        etcd_initial_cluster = '{}=https://{}:2380'.format(hostname, etcd_internal_ip)
+def run_render(cwd,config,j2_env):
+    # global vars
+    _hosts_list = []
 
-        peers = []
-        for key in sorted(config['etcd'].keys()):
-            if key != hostname:
-                ip = config['etcd'][key]['ip']
-                peers.append((key, ip))
-                etcd_endpoints       = etcd_endpoints       + ',https://{}:2379'.format(ip)
-                etcd_initial_cluster = etcd_initial_cluster + ',{}=https://{}:2380'.format(key, ip)        #                        )
-            out_file = os.path.join(cwd,"init_coreos_nodes/etcd-{}.yml".format(hostname))
-            with open(out_file, 'w') as f:
-                f.write(
-                    j2_env.get_template("etcd-template.yml").render(
-                            hostname=hostname,
-                            internal_IP=etcd_internal_ip,
-                            peers=peers,
-                            initial_cluster=etcd_initial_cluster,
-                            etcd_endpoints=etcd_endpoints,
-                            ssh_public_key=config['global']["ssh_public_key"],
-                            password_hash=config['global']["password_hash"],
-                            ca=get_certificate("ca.pem"),
-                            etcd_nodes=get_certificate("etcd.pem"),
-                            etcd_nodes_key=get_certificate("etcd-key.pem")
-                    )
-                )
-    for hostname in config['api-servers'].keys():
-        out_file = os.path.join(cwd,"init_coreos_nodes/kube-{}.yml".format(hostname))
+    leaves = []
+    for key in config['certificates']:
+        for name in config['certificates'][key].values():
+            for item in name:
+                leaves.append(item)
+
+    render_dir  = os.path.join(cwd,'init_coreos_nodes/')
+    if not os.path.exists(render_dir):
+        rmtree(render_dir,ignore_errors=True)
+        os.mkdir(render_dir)
+
+    computers = {}
+    computers.update(config['etcd'])
+    computers.update(config['kube-apiservers'])
+    computers.update(config['worker'])
+    for computer in computers.keys():
+        _hosts_list.append((computers[computer]['hostname'], computers[computer]['ip']))
+
+
+    etcd_hosts_list = []
+    etcd_initial_cluster = []
+    etcd_endpoints = []
+    for hostname in config['etcd'].keys():
+        ip=config['etcd'][hostname]["ip"]
+        etcd_hosts_list.append((hostname, ip))
+        etcd_initial_cluster.append('{}=https://{}:2380'.format(hostname, ip))
+        etcd_endpoints.append('https://{}:2379'.format(ip))
+
+    for hostname in config['etcd'].keys():
+        out_file = os.path.join(render_dir,"{}.yml".format(hostname))
         with open(out_file, 'w') as f:
             f.write(
-                j2_env.get_template("kube-apiserver-template.yml").render(
-                        hostname=hostname,
-                        internal_IP=config['api-servers'][hostname]['ip'],
-                        peers=peers,
-                        etcd_endpoints=etcd_endpoints,
-                        ssh_public_key=config['global']["ssh_public_key"],
-                        password_hash=config['global']["password_hash"],
-                        # ca
-                        ca=get_certificate("ca.pem"),
-                        ca_key=get_certificate("ca-key.pem"),
-                        # etcd
-                        etcd_nodes=get_certificate("etcd.pem"),
-                        etcd_nodes_key=get_certificate("etcd-key.pem"),
-                        # api
-                        apiserver=get_certificate("kubernetes.pem"),
-                        apiserver_key=get_certificate("kubernetes-key.pem"),
-                        # service account for tls authorization
-                        service_account=get_certificate("service-account.pem"),
-                        service_account_key=get_certificate("service-account-key.pem"),
-                        # kube controller
-                        kube_controller_manager=get_certificate("kube-controller-manager.pem"),
-                        kube_controller_manager_key=get_certificate("kube-controller-manager-key.pem"),
+                j2_env.get_template("templates/kube/etcd-template.yml").render(
+                    hostname=hostname,
+                    internal_IP=config['etcd'][hostname]['ip'],
+                    _hosts_list=_hosts_list,
+                    initial_cluster=','.join(etcd_initial_cluster),
+                    etcd_endpoints=','.join(etcd_endpoints),
+                    ssh_public_key=config['global']["ssh_public_key"],
+                    password_hash=config['global']["password_hash"],
+                    ca=get_certificate("ca.pem"),
+                    etcd_nodes=get_certificate("etcd.pem"),
+                    etcd_nodes_key=get_certificate("etcd-key.pem")
                 )
             )
+        translateToIgnition(cwd, hostname)
 
+    for hostname in config['kube-apiservers'].keys():
+        out_file = os.path.join(render_dir, "{}.yml".format(hostname))
+        with open(out_file, 'w') as f:
+            f.write(
+                j2_env.get_template("templates/kube/kube-apiserver-template.yml").render(
+                    hostname=hostname,
+                    internal_IP=config['kube-apiservers'][hostname]['ip'],
+                    _hosts_list=_hosts_list,
+                    etcd_endpoints=','.join(etcd_endpoints),
+                    ssh_public_key=config['global']["ssh_public_key"],
+                    password_hash=config['global']["password_hash"],
+                    # ca
+                    ca=get_certificate("ca.pem"),
+                    ca_key=get_certificate("ca-key.pem"),
+                    # etcd
+                    etcd_nodes=get_certificate('etcd.pem'),
+                    etcd_nodes_key=get_certificate('etcd-key.pem'),
+
+                    # api
+                    apiserver=get_certificate('kube-apiservers.pem'),
+                    apiserver_key=get_certificate('kube-apiservers-key.pem'),
+
+                    # service account for tls authorization
+                    service_account=get_certificate("service-account.pem"),
+                    service_account_key=get_certificate("service-account-key.pem"),
+                    # kube controller
+                    kube_controller_manager=get_certificate("kube-controller-manager.pem"),
+                    kube_controller_manager_key=get_certificate("kube-controller-manager-key.pem"),
+                )
+            )
+        translateToIgnition(cwd, hostname)
+
+def translateToIgnition(cwd,hostname):
+    render_dir  = os.path.join(cwd,'init_coreos_nodes/')
+    ct = os.path.join(cwd,'bin/ct')
+    ct_bash_cmd = "{ct} -in-file {hostname}.yml  -out-file {hostname}.json -pretty".format(ct=ct,hostname=os.path.join(render_dir,hostname))
+    process = Popen(ct_bash_cmd, shell=True, stdout=DEVNULL,stdin=DEVNULL,stderr=DEVNULL)
+    process.communicate()
+    print(ct_bash_cmd)
 
 def main():
     pass
