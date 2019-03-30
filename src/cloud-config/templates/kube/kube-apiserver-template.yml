@@ -97,44 +97,44 @@ storage:
       mode: 0644
       contents:
         inline: |
-          {{ca}}
+           {{ca}}
     - path: /var/lib/etcd/ssl/etcd-nodes.pem
       filesystem: root
       mode: 0644
       contents:
         inline: |
-          {{etcd_nodes}}
+           {{etcd_nodes}}
     - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
       filesystem: root
       mode: 0600
       contents:
         inline: |
-          {{etcd_nodes_key}}
+           {{etcd_nodes_key}}
 
     - path: /etc/kubernetes/ssl/ca.pem
       filesystem: root
       mode: 0644
       contents:
         inline: |
-          {{ca}}
+           {{ca}}
     - path: /etc/kubernetes/ssl/ca-key.pem
       filesystem: root
       mode: 0600
       contents:
         inline: |
-          {{ca_key}}          
+           {{ca_key}}
     - path: /etc/kubernetes/ssl/apiserver.pem
       filesystem: root
       mode: 0644
       contents:
         inline: |
-          {{apiserver}}
+           {{apiserver}}
     - path: /etc/kubernetes/ssl/apiserver-key.pem
       filesystem: root
       mode: 0600
       contents:
         inline: |
-          {{apiserver_key}}
+           {{apiserver_key}}
 
 
     - path: /etc/kubernetes/ssl/service-account.pem
@@ -142,28 +142,28 @@ storage:
       mode: 0644
       contents:
         inline: |
-          {{service_account}}
+           {{service_account}}
 
     - path: /etc/kubernetes/ssl/service-account-key.pem
       filesystem: root
       mode: 0600
       contents:
         inline: |
-          {{service_account_key}}
+           {{service_account_key}}
 
     - path: /etc/kubernetes/ssl/kube-controller-manager.pem
       filesystem: root
       mode: 0644
       contents:
         inline: |
-          {{kube_controller_manager}}
+           {{kube_controller_manager}}
 
     - path: /etc/kubernetes/ssl/kube-controller-manager-key.pem
       filesystem: root
       mode: 0600
       contents:
         inline: |
-          {{kube_controller_manager_key}}              
+           {{kube_controller_manager_key}}
 
     - path: /etc/kubernetes/cni/net.d/10-flannel.conf
       filesystem: root

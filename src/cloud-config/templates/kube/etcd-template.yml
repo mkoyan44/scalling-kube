@@ -87,20 +87,20 @@ storage:
     mode: 0644
     contents:
       inline: |
-        {{ca}}
+         {{ca}}
 
   - path: /var/lib/etcd/ssl/etcd-nodes.pem
     filesystem: root
     mode: 0644
     contents:
       inline: |
-        {{etcd_nodes}}
+         {{etcd_nodes}}
   - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
     filesystem: root
     mode: 0644
     contents:
       inline: |
-        {{etcd_nodes_key}}
+         {{etcd_nodes_key}}
 etcd:
   # Human-readable name for this member.
   name:                        "{{ hostname }}"

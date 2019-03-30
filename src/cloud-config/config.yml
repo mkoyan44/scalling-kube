@@ -2,7 +2,7 @@ certificates:
   ca:
     name: ['ca']
   etcd:
-    name: ['etcd-1','etcd-3','etcd-3']
+    name: ['etcd-1','etcd-2','etcd-3']
   admin:
     name: ['admin','mkoyan']
   worker:
@@ -21,6 +21,9 @@ certificates:
 global:
     ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8vuYTJs0b/fRAy97mXI9pOnL/gPknFpt4r/5tK8n7MnLXnfUY5zNIXbyrNxFhPuvB961no9yjeuis1c1UwKsdh8tmYhZn4eMWD7YXMwMlpU1Sk5+CJo7xBqQu62CcJbcvuXzUTco1ytnEqyhDZGmAQT3t4QaKKVkBFx17jpiz4subNR4xiIl+NGKWRmnrBru+AW4BhgsWfqZ3PuFnvSb7NNtpzBv8RnHDE58gXpFdbH+n7QhVyPY0ObBeeunOPTdxQ0rdK4RIsqQEujze6Fxex44d46rA8YsCmfW2XG+loVrvNv6OCPNt5l7fArgr9DYWZtkme5uCflTjrDZPlPcF mkoyan@devops"
     password_hash: "$6$rounds=4096$J5D/WMPiRMY$Y8SsVHtgfz0nBXY8SrYOqW3qZEVUYF2ZsN5dUYQS0zzx7B/fwHCRdBTqo2Zbn3w7o4vxNs57bMlDQk8JN3A1e/"
+
+lb:
+  ip: "10.100.130.210"
 etcd:
     etcd-1:
       hostname: "etcd-1"

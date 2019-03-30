@@ -6,23 +6,25 @@ except ImportError:
     import os
     DEVNULL = open(os.devnull, 'wb')
 
+cwd = os.path.dirname(os.path.abspath(__file__))
+
 def get_certificate(name):
-    pem_file = "keys/{name}".format(name=name)
+    pem_file = os.path.join(cwd,'keys/', name)
     with open(pem_file,'r') as f:
         list_ = f.read().splitlines()
-        return "          ".join(
-                            [str(x.strip()) + '\n' for x in list_],
+        return "         ".join(
+                            [str(x.rstrip()) + '\n' for x in list_],
                         )
 
-def run_render(cwd,config,j2_env):
+def run_render(config,j2_env):
     # global vars
     _hosts_list = []
 
-    leaves = []
-    for key in config['certificates']:
-        for name in config['certificates'][key].values():
-            for item in name:
-                leaves.append(item)
+    # leaves = []
+    # for key in config['certificates']:
+    #     for name in config['certificates'][key].values():
+    #         for item in name:
+    #             leaves.append(item)
 
     render_dir  = os.path.join(cwd,'init_coreos_nodes/')
     if not os.path.exists(render_dir):
@@ -60,10 +62,10 @@ def run_render(cwd,config,j2_env):
                     password_hash=config['global']["password_hash"],
                     ca=get_certificate("ca.pem"),
                     etcd_nodes=get_certificate("etcd.pem"),
-                    etcd_nodes_key=get_certificate("etcd-key.pem")
+                    etcd_nodes_key=get_certificate("etcd-key.pem"),
                 )
             )
-        translateToIgnition(cwd, hostname)
+        translateToIgnition(hostname)
 
     for hostname in config['kube-apiservers'].keys():
         out_file = os.path.join(render_dir, "{}.yml".format(hostname))
@@ -95,15 +97,14 @@ def run_render(cwd,config,j2_env):
                     kube_controller_manager_key=get_certificate("kube-controller-manager-key.pem"),
                 )
             )
-        translateToIgnition(cwd, hostname)
+        translateToIgnition(hostname)
 
-def translateToIgnition(cwd,hostname):
-    render_dir  = os.path.join(cwd,'init_coreos_nodes/')
+def translateToIgnition(hostname):
+    render_dir = os.path.join(cwd,'init_coreos_nodes/')
     ct = os.path.join(cwd,'bin/ct')
     ct_bash_cmd = "{ct} -in-file {hostname}.yml  -out-file {hostname}.json -pretty".format(ct=ct,hostname=os.path.join(render_dir,hostname))
     process = Popen(ct_bash_cmd, shell=True, stdout=DEVNULL,stdin=DEVNULL,stderr=DEVNULL)
     process.communicate()
-    print(ct_bash_cmd)
 
 def main():
     pass
