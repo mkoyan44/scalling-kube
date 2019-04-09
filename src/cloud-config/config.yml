@@ -44,7 +44,7 @@ kube-apiservers:
       hostname: "kube-apiservers-2"
       ip: "10.100.130.116"
 
-worker:
+kube-workers:
     worker-1:
       hostname: 'worker-1'
       ip: '10.100.130.200'

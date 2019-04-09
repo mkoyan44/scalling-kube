@@ -45,11 +45,11 @@ storage:
       inline: |
         COREOS_PRIVATE_IPV4={{ internal_IP }}
         COREOS_HOSTNAME={{ hostname }}
-        ETCDCTL_CACERT=/var/lib/etcd/ssl/ca.pem
-        ETCDCTL_CERT=/var/lib/etcd/ssl/etcd-nodes.pem
-        ETCDCTL_KEY=/var/lib/etcd/ssl/etcd-nodes-key.pem
-        ETCDCTL_API=3
-        ETCDCTL_ENDPOINTS={{ etcd_endpoints }}
+        ETCDCTL_CA_FILE=/var/lib/etcd/ssl/ca.pem
+        ETCDCTL_CERT_FILE=/var/lib/etcd/ssl/etcd-nodes.pem
+        ETCDCTL_KEY_FILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+        ETCDCTL_ENDPOINTS="{{etcd_endpoints}}"
+        ETCD_ENDPOINTS="{{etcd_endpoints}}"
   - filesystem: "root"
     path:       "/etc/hostname"
     mode:       0644

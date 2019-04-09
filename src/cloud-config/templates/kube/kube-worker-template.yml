@@ -1,0 +1,479 @@
+#cloud-config
+
+update:
+  group:  "alpha"
+locksmith:
+  reboot_strategy:  "etcd-lock"
+  etcd_endpoints:   "{{etcd_endpoints}}"
+  etcd_cafile:      "/var/lib/etcd/ssl/ca.pem"
+  etcd_certfile:    "/var/lib/etcd/ssl/etcd-nodes.pem"
+  etcd_keyfile:     "/var/lib/etcd/ssl/etcd-nodes-key.pem"
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - "{{ ssh_public_key }}"
+
+    - name: mkoyan
+      password_hash: "{{ password_hash }}"
+      ssh_authorized_keys:
+        - "{{ ssh_public_key }}"
+      home_dir: /home/mkoyan
+      groups:
+        - sudo
+        - docker
+      shell: /bin/bash
+
+networkd:
+  units:
+    - name: 00-ens192.network
+      contents: |
+        [Match]
+        Name=ens192
+
+        [Network]
+        DNS=10.100.130.1
+        Address={{ internal_IP }}/24
+        Gateway=10.100.130.1
+storage:
+  files:
+  - path:       /etc/environment
+    filesystem: root
+    mode:       0644
+    contents:
+      inline: |
+        ADVERTISE_IP={{internal_IP}}
+        COREOS_HOSTNAME={{ hostname }}
+        ETCDCTL_CA_FILE=/var/lib/etcd/ssl/ca.pem
+        ETCDCTL_CERT_FILE=/var/lib/etcd/ssl/etcd-nodes.pem
+        ETCDCTL_KEY_FILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+        ETCDCTL_ENDPOINTS="{{etcd_endpoints}}"
+        ETCD_ENDPOINTS="{{etcd_endpoints}}"
+
+        FLANNELD_IFACE={{internal_IP}}
+        FLANNELD_ETCD_ENDPOINTS="{{etcd_endpoints}}"
+        FLANNELD_ETCD_PREFIX="/coreos.com/network"
+
+        LOCKSMITHCTL_ETCD_CAFILE=/var/lib/etcd/ssl/ca.pem
+        LOCKSMITHCTL_ETCD_CERTFILE=/var/lib/etcd/ssl/etcd-nodes.pem
+        LOCKSMITHCTL_ETCD_KEYFILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+        LOCKSMITHCTL_ENDPOINT="{{etcd_endpoints}}"
+  - path:       /etc/hostname
+    filesystem: root
+    mode:       0644
+    contents:
+      inline: |
+        {{ hostname }}.mkoyan.local
+  - path:       /etc/hosts
+    filesystem: root
+    mode:       0644
+    contents:
+      inline: |
+        127.0.0.1	localhost
+        ::1		localhost
+        {%for peer in _hosts_list%}
+        {{peer[1]}}     {{peer[0]}}    {{peer[0]}}.mkoyan.local
+        {%endfor%}
+
+  - path:       /etc/motd
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        Hey Mkoyan!
+  - path:       /etc/systemd/timesyncd.conf
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        [Time]
+        NTP=10.100.130.1
+
+  - path: /var/lib/etcd/ssl/ca.pem
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+         {{ca}}
+  - path: /var/lib/etcd/ssl/etcd-nodes.pem
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+         {{etcd_nodes}}
+  - path: /var/lib/etcd/ssl/etcd-nodes-key.pem
+    filesystem: root
+    mode: 0600
+    contents:
+      inline: |
+         {{etcd_nodes_key}}
+
+  - path: /etc/kubernetes/ssl/ca.pem
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+         {{ca}}
+
+  - path: /etc/kubernetes/ssl/worker.pem
+    filesystem: root
+    mode: 0600
+    contents:
+      inline: |
+        {{worker_cert}}
+
+  - path: /etc/kubernetes/ssl/worker-key.pem
+    filesystem: root
+    mode: 0600
+    contents:
+      inline: |
+        {{worker_key}}
+
+  - path: /etc/kubernetes/cni/net.d/10-flannel.conf
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        {
+            "name": "podnet",
+            "type": "flannel",
+            "delegate": {
+                "forceAddress": true,
+                "isDefaultGateway": true,
+                "hairpinMode": true
+            }
+        }
+  - path: /etc/flannel/options.env
+    filesystem: root
+    mode:       0644
+    contents:
+      inline: |
+        ADVERTISE_IP={{internal_IP}}
+        COREOS_HOSTNAME={{ hostname }}
+
+
+        ETCDCTL_CA_FILE=/var/lib/etcd/ssl/ca.pem
+        ETCDCTL_CERT_FILE=/var/lib/etcd/ssl/etcd-nodes.pem
+        ETCDCTL_KEY_FILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+        ETCDCTL_ENDPOINTS="{{etcd_endpoints}}"
+        ETCD_ENDPOINTS="{{etcd_endpoints}}"
+
+        FLANNELD_IFACE={{internal_IP}}
+        FLANNELD_ETCD_ENDPOINTS="{{etcd_endpoints}}"
+        FLANNELD_ETCD_PREFIX="/coreos.com/network"
+
+        LOCKSMITHCTL_ETCD_CAFILE=/var/lib/etcd/ssl/ca.pem
+        LOCKSMITHCTL_ETCD_CERTFILE=/var/lib/etcd/ssl/etcd-nodes.pem
+        LOCKSMITHCTL_ETCD_KEYFILE=/var/lib/etcd/ssl/etcd-nodes-key.pem
+        LOCKSMITHCTL_ENDPOINT="{{etcd_endpoints}}"
+  - path: /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        [Service]
+        ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
+        ExecStartPre=/usr/bin/ln -sf /etc/kubernetes/ssl /etc/kubernetes/pki
+
+  - path: /etc/kubernetes/cni/docker_opts_cni.env
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        DOCKER_OPT_BIP=""
+        DOCKER_OPT_IPMASQ=""
+  - path: /etc/systemd/system/docker.service.d/40-flannel.conf
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        [Unit]
+        Requires=flanneld.service
+        After=flanneld.service
+        [Service]
+        EnvironmentFile=/etc/kubernetes/cni/docker_opts_cni.env
+
+  - path: /etc/kubernetes/kubelet.env
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        KUBELET_IMAGE_URL=gcr.io/google_containers/hyperkube
+        KUBELET_VERSION=v1.13.1
+
+  - path: /etc/kubernetes/ssl/worker-kubeconfig.yaml
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        apiVersion: v1
+        kind: Config
+        clusters:
+        - name: local
+          cluster:
+            server: https://{{internal_IP}}:443
+            certificate-authority: /etc/kubernetes/ssl/ca.pem
+        users:
+        - name: kubelet
+          user:
+            client-certificate: /etc/kubernetes/ssl/worker.pem
+            client-key: /etc/kubernetes/ssl/worker-key.pem
+        contexts:
+        - context:
+            cluster: local
+            user: kubelet
+
+#
+#  - path: /etc/kubernetes/ssl/token-bootstrap-auth.csv
+#    filesystem: root
+#    mode: 0644
+#    contents:
+#      inline: |
+#        ba7lwu.7volidj03khoqr8m,kubelet-bootstrap,10001,'system:node-bootstrapper'
+
+
+  - path: /etc/kubernetes/config.yaml
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        address: 0.0.0.0
+        apiVersion: kubelet.config.k8s.io/v1beta1
+        authentication:
+          anonymous:
+            enabled: false
+          webhook:
+            cacheTTL: 2m0s
+            enabled: true
+          x509:
+            clientCAFile: /etc/kubernetes/ssl/ca.pem
+        authorization:
+          mode: Webhook
+          webhook:
+            cacheAuthorizedTTL: 5m0s
+            cacheUnauthorizedTTL: 30s
+        cgroupDriver: cgroupfs
+        cgroupsPerQOS: true
+        clusterDNS:
+        - 10.3.0.10
+        clusterDomain: mkoyan.local
+        containerLogMaxFiles: 5
+        containerLogMaxSize: 10Mi
+        contentType: application/vnd.kubernetes.protobuf
+        cpuCFSQuota: true
+        cpuManagerPolicy: none
+        cpuManagerReconcilePeriod: 10s
+        enableControllerAttachDetach: true
+        enableDebuggingHandlers: true
+        enforceNodeAllocatable:
+        - pods
+        eventBurst: 10
+        eventRecordQPS: 5
+        evictionHard:
+          imagefs.available: 15%
+          memory.available: 100Mi
+          nodefs.available: 10%
+          nodefs.inodesFree: 5%
+        evictionPressureTransitionPeriod: 5m0s
+        failSwapOn: true
+        fileCheckFrequency: 20s
+        hairpinMode: promiscuous-bridge
+        healthzBindAddress: 127.0.0.1
+        healthzPort: 10248
+        httpCheckFrequency: 20s
+        imageGCHighThresholdPercent: 85
+        imageGCLowThresholdPercent: 80
+        imageMinimumGCAge: 2m0s
+        iptablesDropBit: 15
+        iptablesMasqueradeBit: 14
+        kind: KubeletConfiguration
+        tlsCertFile: "/etc/kubernetes/ssl/worker.pem"
+        tlsPrivateKeyFile: "/etc/kubernetes/ssl/worker-key.pem"
+        RotateCertificates: true
+        # enable ssl auth for join
+        ServerTLSBootstrap: true
+        kubeAPIBurst: 10
+        kubeAPIQPS: 5
+        makeIPTablesUtilChains: true
+        maxOpenFiles: 1000000
+        maxPods: 110
+        nodeStatusUpdateFrequency: 10s
+        oomScoreAdj: -999
+        podPidsLimit: -1
+        port: 10250
+        registryBurst: 10
+        registryPullQPS: 5
+        resolvConf: /etc/resolv.conf
+        rotateCertificates: true
+        runtimeRequestTimeout: 2m0s
+        serializeImagePulls: true
+        staticPodPath: /etc/kubernetes/manifests
+        streamingConnectionIdleTimeout: 4h0m0s
+        syncFrequency: 1m0s
+        volumeStatsAggPeriod: 1m0s
+  - path: /etc/kubernetes/manifests/kube-proxy.yaml
+    filesystem: root
+    mode: 0644
+    contents:
+      inline: |
+        ---
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          labels:
+            k8s-app: kube-proxy
+            tier: node
+          name: kube-proxy
+          namespace: kube-system
+        spec:
+          containers:
+            -
+              command:
+                - ./hyperkube
+                - proxy
+                - "--master=https://10.100.130.115:443"
+                - "--kubeconfig=/etc/kubernetes/ssl/worker-kubeconfig.yaml"
+                - "--logtostderr=true"
+                - "--proxy-mode=iptables"
+                - "--hostname-override={{internal_IP}}"
+                - "--cluster-cidr=10.244.0.0/16"
+                - "--v=3"
+              env:
+                -
+                  name: NODE_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: spec.nodeName
+              image: "gcr.io/google_containers/hyperkube:v1.13.1"
+              name: kube-proxy
+              securityContext:
+                privileged: true
+              volumeMounts:
+                -
+                  mountPath: /etc/ssl/certs
+                  name: ssl-certs-host
+                  readOnly: true
+                -
+                  mountPath: /etc/kubernetes/ssl
+                  name: "kube-ssl"
+                  readOnly: true
+          hostNetwork: true
+          tolerations:
+            -
+              effect: NoSchedule
+              key: node-role.kubernetes.io/master
+              operator: Exists
+          volumes:
+            -
+              hostPath:
+                path: /usr/share/ca-certificates
+              name: ssl-certs-host
+            -
+              hostPath:
+                path: "/etc/kubernetes/ssl"
+              name: "kube-ssl"
+
+systemd:
+  units:
+    - name: kubelet.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=The primary agent to run pods
+        Documentation=http://kubernetes.io/docs/admin/kubelet/
+        Requires=etcd-member.service
+        After=flanneld.service
+        
+        [Service]
+        Slice=system.slice
+        Environment=RKT_GLOBAL_ARGS="--insecure-options=image"
+        Environment=KUBELET_IMAGE_URL=docker://gcr.io/google_containers/hyperkube
+        Environment=KUBELET_IMAGE_TAG=v1.13.1
+        Environment=#HTTP_PROXY=
+        Environment=#HTTPS_PROXY=
+        #Environment=##http_proxy=
+        #Environment=##https_proxy=
+        Environment=no_proxy=localhost,127.0.0.0/8,127.0.0.1,::1,172.20.0.11,172.20.0.12,172.20.0.13,coreos-1,coreos-2,coreos-3,coreos-1.mkoyan.local,coreos-2.mkoyan.local,coreos-3.mkoyan.local,/var/run/docker.sock
+        ExecStart=/usr/lib/coreos/kubelet-wrapper \
+          --register-node=true \
+          --register-schedulable=true \
+          --hostname-override={{internal_IP}} \
+          --kubeconfig=/etc/kubernetes/ssl/worker-kubeconfig.yaml \
+          --config=/etc/kubernetes/config.yaml \
+          --network-plugin=cni \
+          --cni-conf-dir=/etc/kubernetes/cni/net.d \
+          --lock-file=/var/run/lock/kubelet.lock \
+          --exit-on-lock-contention \
+          --logtostderr=true \
+          --v=2
+        Restart=always
+        StartLimitInterval=0
+        RestartSec=10
+        
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: settimezone.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Set the time zone
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone Asia/Yerevan
+        RemainAfterExit=yes
+        Type=oneshot
+
+
+    - name: flanneld.service
+      dropins:
+        - name: 50-network-config.conf
+          contents: |
+            [Service]
+            EnvironmentFile=/etc/flannel/options.env
+            ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan","VNI": 1}}'
+            Restart=always
+
+    - name: flanneld.service
+      dropins:
+        - name: 50-ssl.conf
+          contents: |
+            [Service]
+            Environment="ETCD_SSL_DIR=/var/lib/etcd/ssl"
+
+
+    - name: docker-tcp.socket
+      enabled: false
+      contents: |
+        [Unit]
+        Description=Docker Socket for the API
+
+        [Socket]
+        ListenStream=2375
+        BindIPv6Only=both
+        Service=docker.service
+
+        [Install]
+        WantedBy=sockets.target
+
+    - name: docker.service
+      enabled: True
+      dropins:
+        - name: 50-insecure-registry.conf
+          contents: |
+            [Service]
+            Environment=DOCKER_OPTS=''
+            #Environment=#HTTP_PROXY=
+            #Environment=#HTTPS_PROXY=
+            #Environment=##http_proxy=
+            #Environment=##https_proxy=
+            #Environment=no_proxy=localhost,127.0.0.0/8,127.0.0.1,::1,10.100.130.115,172.20.0.12,172.20.0.13,coreos-1,coreos-2,coreos-3,coreos-1.mkoyan.local,coreos-2.mkoyan.local,coreos-3.mkoyan.local,/var/run/docker.sock
+
+flannel:
+  version:        0.11.0
+  etcd_prefix:    /coreos.com/network
+  etcd_endpoints: {{etcd_endpoints}}
+  etcd_cafile:    /var/lib/etcd/ssl/ca.pem
+  etcd_certfile:  /var/lib/etcd/ssl/etcd-nodes.pem
+  etcd_keyfile:   /var/lib/etcd/ssl/etcd-nodes-key.pem
+  interface:      ens192

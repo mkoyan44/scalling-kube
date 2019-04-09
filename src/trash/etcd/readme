@@ -52,3 +52,12 @@ etcdctl set /example/am "Artur"
 etcdctl watch /example/am
 while true; do etcdctl watch --recursive /example; done
 etcdctl exec-watch --recursive /example/am -- rm -rf /home/core/trash.txt
+
+
+# test kube-api
+
+curl -v -k \
+  --cacert /home/mkoyan/PycharmProjects/scalling-kube/src/cloud-config/keys/ca.pem \
+  --key /home/mkoyan/PycharmProjects/scalling-kube/src/cloud-config/keys/admin-key.pem \
+  --cert /home/mkoyan/PycharmProjects/scalling-kube/src/cloud-config/keys/admin.pem \
+  https://10.100.130.115/api/v1/

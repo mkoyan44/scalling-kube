@@ -69,7 +69,7 @@ def genTLS(crt_name,cwd,config,j2Env):
                        ' -profile=kubernetes {csr_file} ' \
                        '-hostname={worker},{worker}.mkoyan.local,{ip} ' \
                        '-config={ca_config} | {bin_cfssl_json} ' \
-                       '-bare {keys_dir}/{crt_name}'.format(
+                       '-bare {keys_dir}/worker'.format(
             bin_cfssl=bin_cfssl,
             bin_cfssl_json=bin_cfssl_json,
             csr_file=csr_file,
@@ -79,7 +79,7 @@ def genTLS(crt_name,cwd,config,j2Env):
             crt_name=crt_name,
             ca_config=ca_config,
             worker=crt_name,
-            ip=config['worker'][crt_name]['ip']
+            ip=config['kube-workers'][crt_name]['ip']
         )
 
     elif crt_name in config['certificates']['kube-controller-manager']['name']:

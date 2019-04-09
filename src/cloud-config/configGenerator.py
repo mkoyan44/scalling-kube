@@ -34,7 +34,7 @@ def run_render(config,j2_env):
     computers = {}
     computers.update(config['etcd'])
     computers.update(config['kube-apiservers'])
-    computers.update(config['worker'])
+    computers.update(config['kube-workers'])
     for computer in computers.keys():
         _hosts_list.append((computers[computer]['hostname'], computers[computer]['ip']))
 
@@ -95,6 +95,33 @@ def run_render(config,j2_env):
                     # kube controller
                     kube_controller_manager=get_certificate("kube-controller-manager.pem"),
                     kube_controller_manager_key=get_certificate("kube-controller-manager-key.pem"),
+                )
+            )
+        translateToIgnition(hostname)
+
+
+    for hostname in config['kube-workers'].keys():
+        out_file = os.path.join(render_dir, "{}.yml".format(hostname))
+        with open(out_file, 'w') as f:
+            f.write(
+                j2_env.get_template("templates/kube/kube-worker-template.yml").render(
+                    hostname=hostname,
+                    internal_IP=config['kube-workers'][hostname]['ip'],
+                    _hosts_list=_hosts_list,
+                    etcd_endpoints=','.join(etcd_endpoints),
+                    ssh_public_key=config['global']["ssh_public_key"],
+                    password_hash=config['global']["password_hash"],
+                    # ca
+                    ca=get_certificate("ca.pem"),
+                    ca_key=get_certificate("ca-key.pem"),
+                    # etcd
+                    etcd_nodes=get_certificate('etcd.pem'),
+                    etcd_nodes_key=get_certificate('etcd-key.pem'),
+
+                    # workers
+                    worker_cert = get_certificate('worker.pem'),
+                    worker_key = get_certificate('worker-key.pem'),
+
                 )
             )
         translateToIgnition(hostname)
